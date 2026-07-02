@@ -1,0 +1,169 @@
+/* BTDropdownList — Figma node 668-8852
+ *
+ * Shared by Vue (imported here) and React (imported in BTDropdownList.tsx).
+ * All var() names verified against packages/tokens/platforms/web/bspace/dist/styles.css.
+ * No hex fallback per CLAUDE.md §6.
+ */
+
+/* ── Container ──────────────────────────────────────────────────────────────── */
+
+.bt-dropdown-list {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-elevation-md);
+  /* Fill whatever container places this list (BTInputDropdown panel, BTInputDate
+   * panel, etc.). The parent is responsible for setting its own width. */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  max-height: 240px;
+}
+
+/* ── Items scroll wrapper ───────────────────────────────────────────────────── */
+
+.bt-dropdown-list__items {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.bt-dropdown-list__items .bt-scrollbar {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Search section ─────────────────────────────────────────────────────────── */
+
+.bt-dropdown-list__search {
+  padding: var(--space-sm) var(--space-md);
+  flex-shrink: 0;
+}
+
+/* ── List items ─────────────────────────────────────────────────────────────── */
+
+.bt-dropdown-list__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 32px;   /* Figma node 668-8852 — each item hugs to 32px */
+  padding: var(--space-sm);
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background 100ms ease;
+}
+
+.bt-dropdown-list__item:hover:not(.bt-dropdown-list__item--disabled) {
+  background: var(--bg-subtle);
+}
+
+.bt-dropdown-list__item:active:not(.bt-dropdown-list__item--disabled) {
+  background: var(--bg-secondary);
+}
+
+.bt-dropdown-list__item--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Checked row — applies to any variant where the caller stamps item.checked — brand-primary-subtle background.
+ * var(--color-brand-primary-subtle) verified in packages/tokens/platforms/web/bspace/dist/styles.css */
+.bt-dropdown-list__item--checked {
+  background: var(--color-brand-primary-subtle);
+}
+
+.bt-dropdown-list__item--checked:hover:not(.bt-dropdown-list__item--disabled) {
+  background: var(--color-brand-primary-subtle);
+}
+
+/* Selectable items (checkbox + radio) — same 32px hugging height, 8px gap between control + label */
+.bt-dropdown-list__item--selectable {
+  height: auto;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  align-items: center;
+}
+
+/* Suppress internal pointer events on embedded controls — the row handles taps */
+.bt-dropdown-list__checkbox,
+.bt-dropdown-list__radio-control {
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+/* Combobox items have a wider gap and no fixed height (avatar sizes them) */
+.bt-dropdown-list__item--combobox {
+  gap: var(--space-sm);
+  height: auto;
+  padding: var(--space-xs) var(--space-sm);
+}
+
+.bt-dropdown-list__item-label {
+  font-size: var(--typography-font-size-sm);   /* 14px */
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: var(--typography-line-height-xs);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Remove (×) affordance on the right of a removable row */
+.bt-dropdown-list__item-remove {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--icon-secondary);
+  display: inline-block;
+  pointer-events: none; /* row click handles the action */
+}
+
+/* ── Avatar (combobox only) ─────────────────────────────────────────────────── */
+
+.bt-dropdown-list__avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-rd);
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--typography-font-size-2xs);  /* 10px */
+  font-weight: 500;
+  color: var(--text-inverse);
+}
+
+/* ── Empty / not-found state ────────────────────────────────────────────────── */
+
+.bt-dropdown-list__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  gap: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bt-dropdown-list__empty-image {
+  width: 80px;
+  height: auto;
+  display: block;
+}
+
+.bt-dropdown-list__empty-text {
+  font-size: 11px;                             /* component-specific — no token match */
+  font-weight: 500;
+  color: #7e93a8;                              /* component-specific palette — hardcoded per CLAUDE.md §2 */
+  text-align: center;
+  line-height: var(--typography-line-height-xs);
+  margin-top: var(--space-xs);
+}

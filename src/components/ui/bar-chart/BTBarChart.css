@@ -1,0 +1,18 @@
+/* BTBarChart — bar chart wrapper */
+
+.bt-bar-chart {
+  width: 100%;
+}
+
+/* Override ApexCharts default white tooltip background */
+.bt-bar-chart .apexcharts-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.bt-bar-chart .apexcharts-xaxistooltip,
+.bt-bar-chart .apexcharts-yaxistooltip {
+  display: none !important;
+}

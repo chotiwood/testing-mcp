@@ -1,0 +1,40 @@
+/*
+ * BTInputClear — canonical slide-from-right animation for all input clear/cancel buttons.
+ *
+ * Vue: wrap with <Transition name="bt-input-clear"> — uses enter/leave classes below.
+ * React: add class "bt-input-clear-enter" on the button element — uses keyframe below.
+ *
+ * DO NOT use a CSS class toggle (--visible) approach — always conditionally render
+ * so the button is removed from the DOM (and tab order) when not shown.
+ */
+
+/* ── Vue Transition hooks ─────────────────────────────────────────────────── */
+
+.bt-input-clear-enter-active,
+.bt-input-clear-leave-active {
+  transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bt-input-clear-enter-from,
+.bt-input-clear-leave-to {
+  opacity: 0;
+  transform: translateX(6px);
+}
+
+.bt-input-clear-enter-to,
+.bt-input-clear-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ── React mount animation (no leave — element is removed from DOM instantly) */
+
+@keyframes bt-input-clear-in {
+  from { opacity: 0; transform: translateX(6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.bt-input-clear-enter {
+  animation: bt-input-clear-in 150ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}

@@ -1,0 +1,36 @@
+{
+  "name": "testingmcp",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "test": "vitest run --config smoke-test.config.ts"
+  },
+  "dependencies": {
+    "@btech/assets": "^0.1.0-rc.4",
+    "@btech/tokens": "^1.0.7",
+    "apexcharts": "^5.13.0",
+    "lottie-web": "^5.13.0",
+    "quill": "^2.0.3",
+    "react": "^19.2.7",
+    "react-apexcharts": "^2.1.0",
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^7.18.1"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "jsdom": "^29.1.1",
+    "oxlint": "^1.71.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.1",
+    "vitest": "^4.1.9"
+  }
+}

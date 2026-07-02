@@ -1,0 +1,204 @@
+/* Clear-button slide-in / slide-out animation — shared canonical definition */
+@import '../BTInputClear.css';
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BTInputTextArea — Figma node 487-6751
+
+   Label: always top-left at 14px; shrinks to 12px when focused or non-empty.
+   Cancel: position:absolute inside body, right:0 (= 8px from wrapper border).
+   Scrollbar: custom overlay, starts 8px below cancel bottom (top: 26px in body).
+   Height: JS-controlled, min 62px (textarea) = 80px wrapper, max 142px = 160px wrapper.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.bt-input-text-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  font-family: var(--typography-font-family-sans);
+  width: 100%;
+}
+
+/* ── Wrapper: block container (not flex-row — cancel is no longer a sibling) ── */
+.bt-input-text-area__wrapper {
+  padding: 8px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  box-sizing: border-box;
+  min-height: 80px;
+  max-height: 160px;
+  transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.bt-input-text-area__wrapper--focused  { border-color: var(--color-brand-primary); }
+.bt-input-text-area__wrapper--error    { border-color: var(--text-error); }
+.bt-input-text-area__wrapper--disabled { background: var(--bg-subtle); }
+
+/* ── Body: position:relative anchor for label + cancel ── */
+.bt-input-text-area__body {
+  position: relative;
+}
+
+/* ── Label: always pinned top-left — font-size changes on focus/fill (like BTInput) ──
+   Resting (empty + unfocused): 14px / line-height 20px — full size at top-left.
+   Active (--floating = focused OR has value): 12px / line-height 16px — shrinks in
+   layout, content below shifts up. Matches BTInput's floating-label density exactly.
+   background: matches surface so scrolled text beneath doesn't bleed through.
+   right: 20px = cancel (16px) + gap (4px). ── */
+.bt-input-text-area__label {
+  position: absolute;
+  top: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 20px;
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-sm);
+  color: var(--text-secondary);
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: var(--bg-primary);
+  z-index: 1;
+  transition: font-size 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              line-height 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Active state — matches BTInput's floating: 12px / 16px line-height */
+.bt-input-text-area__label--floating {
+  font-size: var(--typography-font-size-xs);
+  line-height: var(--typography-line-height-xs);
+}
+
+/* Focused + active: label turns brand-primary */
+.bt-input-text-area__wrapper--focused .bt-input-text-area__label--floating {
+  color: var(--color-brand-primary);
+}
+
+.bt-input-text-area__label--error    { color: var(--text-error) !important; }
+.bt-input-text-area__label--disabled { color: var(--text-disabled); background: var(--bg-subtle); }
+
+.bt-input-text-area__required {
+  color: var(--text-error);
+  margin-inline-start: var(--space-2xs);
+}
+
+/* ── Textarea ──
+   padding-right: 20px = cancel (16px) + gap (4px). Native scrollbar hidden — custom overlay used.
+   No flex:1 — JS inline height must not be overridden. ── */
+.bt-input-text-area__field {
+  display: block;
+  width: 100%;
+  min-height: 62px;
+  box-sizing: border-box;
+  padding-block: 8px;
+  padding-inline-end: 20px;
+  padding-inline-start: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-sm);
+  resize: none;
+  overflow-y: hidden;
+  transition: height 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Hide native scrollbar — custom overlay handles it */
+  scrollbar-width: none;
+}
+
+/* Resting: label is 14px/20px → padding-top matches so content starts right below. */
+.bt-input-text-area__field--has-label {
+  padding-top: 20px;
+}
+
+/* Floating: label shrinks to 12px/16px → padding-top follows so gap stays the same. */
+.bt-input-text-area__field--label-floating {
+  padding-top: 16px;
+}
+
+.bt-input-text-area__field::placeholder { color: var(--text-secondary); }
+.bt-input-text-area__field:disabled     { color: var(--text-disabled); cursor: not-allowed; }
+.bt-input-text-area__field::-webkit-scrollbar { display: none; }
+
+/* ── Cancel button: absolute inside body, right:0 = 8px from wrapper border (via padding).
+   top: 2px  = vertically centered with the 20px floating label.
+   z-index: 3 = above scrollbar track, label, and textarea content.
+   Visibility driven by v-if + <Transition name="bt-input-clear"> — no toggle class needed. ── */
+.bt-input-text-area__clear {
+  position: absolute;
+  inset-inline-end: 0;
+  top: var(--space-2xs);
+  z-index: 3;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon-primary);
+}
+
+.bt-input-text-area__clear img,
+.bt-input-text-area__clear svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* ── Custom scrollbar ──
+   Track: absolute inside body, right:0 (aligns with cancel button's right edge).
+   top: 26px = cancel top (2px) + cancel height (16px) + gap (8px).
+   Shown only when textarea content overflows max height.
+   z-index: 2 = above label/textarea, below cancel button. ── */
+.bt-input-text-area__scrollbar-track {
+  position: absolute;
+  inset-inline-end: 0;
+  top: 26px;
+  bottom: 0;
+  width: 4px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.bt-input-text-area__scrollbar-thumb {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-radius: var(--radius-xs);
+  background: var(--bg-subtlest);   /* matches BTScrollbar thumb token */
+  min-height: 20px;
+  pointer-events: auto;             /* draggable even though track is pointer-events:none */
+  cursor: ns-resize;
+  transition: background 150ms ease;
+}
+
+.bt-input-text-area__scrollbar-thumb:hover {
+  background: var(--text-disabled); /* matches BTScrollbar hover token */
+}
+
+/* ── Footer ── */
+.bt-input-text-area__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+}
+
+.bt-input-text-area__error      { flex: 1; color: var(--text-error); }
+.bt-input-text-area__helper     { flex: 1; color: var(--text-secondary); }
+.bt-input-text-area__char-count { flex-shrink: 0; color: var(--text-secondary); }
+
+/* ── RTL: cursor/caret at inline-start (right in RTL) ──────────────────── */
+[dir="rtl"] .bt-input-text-area__field { direction: rtl; }

@@ -1,0 +1,17 @@
+/* BTLineChart — line/area chart wrapper */
+
+.bt-line-chart {
+  width: 100%;
+}
+
+.bt-line-chart .apexcharts-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.bt-line-chart .apexcharts-xaxistooltip,
+.bt-line-chart .apexcharts-yaxistooltip {
+  display: none !important;
+}

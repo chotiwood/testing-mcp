@@ -1,0 +1,117 @@
+/* BTChart tooltip balloon — aligned to BTTooltip / Figma 3404:2299. */
+
+.bt-chart-tooltip {
+  display: flex;
+  align-items: stretch;
+  width: max-content;
+  max-width: min(220px, calc(100vw - var(--space-xl)));
+  color: var(--text-inverse);
+  font-family: var(--typography-font-family-sans, "Geist", system-ui);
+}
+
+.bt-chart-tooltip--left {
+  flex-direction: row-reverse;
+}
+
+.bt-chart-tooltip--right {
+  flex-direction: row;
+}
+
+.bt-chart-tooltip--plain {
+  display: block;
+}
+
+.bt-chart-tooltip__arrow-col {
+  position: relative;
+  width: 8px;
+  align-self: stretch;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.bt-chart-tooltip--left .bt-chart-tooltip__arrow-col {
+  margin-left: -1px;
+}
+
+.bt-chart-tooltip--right .bt-chart-tooltip__arrow-col {
+  margin-right: -1px;
+}
+
+.bt-chart-tooltip__arrow {
+  position: absolute;
+  top: 50%;
+  display: block;
+  transform: translateY(-50%);
+}
+
+.bt-chart-tooltip--left .bt-chart-tooltip__arrow {
+  right: 0;
+}
+
+.bt-chart-tooltip--right .bt-chart-tooltip__arrow {
+  left: 0;
+}
+
+.bt-chart-tooltip__body {
+  min-width: 148px;
+  padding: var(--space-lg);
+  background: var(--bg-inverse);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-elevation-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  box-sizing: border-box;
+}
+
+.bt-chart-tooltip--plain .bt-chart-tooltip__body {
+  min-width: 0;
+}
+
+.bt-chart-tooltip__title {
+  margin: 0;
+  color: var(--text-inverse);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  text-align: center;
+}
+
+.bt-chart-tooltip__separator {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.bt-chart-tooltip__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.bt-chart-tooltip__row + .bt-chart-tooltip__row {
+  margin-block-start: var(--space-xs);
+}
+
+.bt-chart-tooltip__swatch {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.bt-chart-tooltip__label {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-inverse);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+}
+
+.bt-chart-tooltip__value {
+  color: var(--text-inverse);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 700;
+  line-height: var(--typography-line-height-xs);
+  white-space: nowrap;
+}

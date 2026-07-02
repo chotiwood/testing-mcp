@@ -1,0 +1,452 @@
+/* ──────────────────────────────────────────────
+   BTCalendar — organism stylesheet
+   Shared with React. No hex fallbacks anywhere.
+   ────────────────────────────────────────────── */
+
+/* Container */
+.bt-calendar {
+  display: inline-flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  font-family: var(--typography-font-family-sans);
+  user-select: none;
+  box-shadow:
+    0px 10px 7.5px rgba(0, 0, 0, 0.1),
+    0px 4px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* With presets: row layout */
+.bt-calendar--has-presets {
+  flex-direction: row;
+}
+
+.bt-calendar__preset-panel {
+  width: 160px;
+  border-inline-end: 1px solid var(--border-primary);
+  padding: var(--space-sm) 0;
+  flex-shrink: 0;
+}
+
+/* Body (right side of preset panel, or full width without presets) */
+.bt-calendar__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-lg);
+  gap: var(--space-lg);
+}
+
+/* Dual month (range) — side-by-side months */
+.bt-calendar__months {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-lg);
+}
+
+.bt-calendar__month {
+  padding: 0;
+}
+
+.bt-calendar__month-subtitle {
+  text-align: center;
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: var(--space-xs);
+  line-height: var(--typography-line-height-xs);
+  margin-bottom: var(--space-xs);
+}
+
+/* ── Header ─────────────────────────────────── */
+.bt-calendar__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+/* Nav prev/next buttons */
+.bt-calendar__nav-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--color-brand-primary);
+  border-radius: var(--radius-xs);
+  flex-shrink: 0;
+  transition: background 0.1s;
+}
+
+.bt-calendar__nav-btn:hover:not(:disabled) {
+  background: var(--bg-subtle);
+}
+
+.bt-calendar__nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* RTL: mirror the chevron glyphs so the left button still shows "<" and the
+ * right still shows ">", while prev/next semantics follow logical direction. */
+[dir="rtl"] .bt-calendar__nav-btn svg {
+  transform: scaleX(-1);
+}
+
+.bt-calendar__header-labels {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  flex: 1;
+}
+
+/* Pill wrapper — needed for dropdown anchor reference */
+.bt-calendar__pill-wrapper {
+  position: relative;
+}
+
+/* Month / year pill buttons */
+.bt-calendar__header-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 106px;
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: var(--typography-font-size-sm);
+  font-weight: 700;
+  color: var(--color-brand-primary);
+  font-family: var(--typography-font-family-sans);
+  border-radius: var(--radius-xs);
+  white-space: nowrap;
+}
+
+.bt-calendar__header-pill:hover {
+  background: var(--bg-subtle);
+}
+
+.bt-calendar__header-arrow {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.bt-calendar__header-arrow--open {
+  transform: rotate(180deg);
+}
+
+/* ── Weekday row ─────────────────────────────── */
+.bt-calendar__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 40px);
+  margin-bottom: var(--space-xs);
+}
+
+.bt-calendar__weekday {
+  text-align: center;
+  font-size: var(--typography-font-size-xs);
+  color: var(--text-secondary);
+  padding: var(--space-xs) 0;
+  width: 40px;
+}
+
+/* ── Day grid ────────────────────────────────── */
+.bt-calendar__days {
+  display: grid;
+  grid-template-columns: repeat(7, 40px);
+  gap: 0;
+  row-gap: var(--space-sm);
+}
+
+/* ── Day cell ────────────────────────────────── */
+.bt-calendar__day {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--typography-font-size-sm);
+  color: var(--text-primary);
+  transition: background 0.1s;
+  font-family: var(--typography-font-family-sans);
+  padding: 0;
+}
+
+.bt-calendar__day:hover:not(.bt-calendar__day--disabled):not(
+    .bt-calendar__day--selected
+  ):not(.bt-calendar__day--range-start):not(.bt-calendar__day--range-end):not(
+    .bt-calendar__day--range-start-only
+  ):not(.bt-calendar__day--range-start-hover):not(
+    .bt-calendar__day--range-end-hover
+  ):not(.bt-calendar__day--in-range):not(.bt-calendar__day--in-range-hover) {
+  background: var(--bg-subtle);
+}
+
+/* ── Day states ──────────────────────────────── */
+.bt-calendar__day--outside {
+  color: var(--text-tertiary);
+}
+
+.bt-calendar__day--disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.bt-calendar__day--today {
+  outline: 1.5px solid var(--color-brand-primary);
+  outline-offset: -1.5px;
+  border-radius: var(--radius-md);
+}
+
+.bt-calendar__day--selected {
+  background: var(--color-brand-primary-bold);
+  color: var(--text-inverse);
+  border-radius: var(--radius-md);
+}
+
+.bt-calendar__day--selected:hover {
+  background: var(--color-brand-primary-bold);
+}
+
+.bt-calendar__day--range-start {
+  background: var(--color-brand-primary-bold);
+  color: var(--text-inverse);
+  border-start-start-radius: var(--radius-md);
+  border-end-start-radius: var(--radius-md);
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.bt-calendar__day--range-end {
+  background: var(--color-brand-primary-bold);
+  color: var(--text-inverse);
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  border-start-end-radius: var(--radius-md);
+  border-end-end-radius: var(--radius-md);
+}
+
+.bt-calendar__day--in-range {
+  background: var(--color-brand-primary-subtle);
+  color: var(--text-primary);
+  border-radius: 0;
+}
+
+/* When start and end are the same day */
+.bt-calendar__day--range-start.bt-calendar__day--range-end {
+  border-radius: var(--radius-md);
+}
+
+/* Start selected but no end yet — fully rounded like a single selected day */
+.bt-calendar__day--range-start-only {
+  background: var(--color-brand-primary-bold);
+  color: var(--text-inverse);
+  border-radius: var(--radius-md);
+}
+
+/* Hover preview endpoints — brand primary at reduced opacity (pre-selected state) */
+.bt-calendar__day--range-start-hover {
+  background: color-mix(
+    in srgb,
+    var(--color-brand-primary-bold) 55%,
+    transparent
+  );
+  color: var(--text-inverse);
+  border-start-start-radius: var(--radius-md);
+  border-end-start-radius: var(--radius-md);
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.bt-calendar__day--range-end-hover {
+  background: color-mix(
+    in srgb,
+    var(--color-brand-primary-bold) 55%,
+    transparent
+  );
+  color: var(--text-inverse);
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  border-start-end-radius: var(--radius-md);
+  border-end-end-radius: var(--radius-md);
+}
+
+/* Hover preview fill — lighter than confirmed in-range */
+.bt-calendar__day--in-range-hover {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  border-radius: 0;
+}
+
+/* ── Event dot ───────────────────────────────── */
+.bt-calendar__day-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-brand-secondary);
+  margin-top: 2px;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ── Month view (3×4 grid) ───────────────────── */
+.bt-calendar__month-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xs);
+  padding: 0 var(--space-sm) var(--space-sm);
+}
+
+.bt-calendar__month-item {
+  padding: var(--space-sm);
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--typography-font-size-sm);
+  color: var(--text-primary);
+  text-align: center;
+  font-family: var(--typography-font-family-sans);
+  transition: background 0.1s;
+}
+
+.bt-calendar__month-item:hover {
+  background: var(--bg-subtle);
+}
+
+.bt-calendar__month-item--selected {
+  background: var(--color-brand-primary-bold);
+  color: var(--text-inverse);
+}
+
+.bt-calendar__month-item--current {
+  outline: 1.5px solid var(--color-brand-primary);
+  outline-offset: -1.5px;
+}
+
+/* ── Year view ───────────────────────────────── */
+.bt-calendar__year-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  max-height: 224px;
+  overflow-y: auto;
+  padding: 0 var(--space-sm) var(--space-sm);
+}
+
+.bt-calendar__year-item {
+  padding: var(--space-sm) var(--space-lg);
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--typography-font-size-sm);
+  color: var(--text-primary);
+  text-align: start;
+  font-family: var(--typography-font-family-sans);
+  transition: background 0.1s;
+}
+
+.bt-calendar__year-item:hover {
+  background: var(--bg-subtle);
+}
+
+.bt-calendar__year-item--selected {
+  background: var(--color-brand-primary-bold);
+  color: var(--text-inverse);
+}
+
+/* ── Preset panel items ──────────────────────── */
+.bt-calendar__preset-item {
+  width: 100%;
+  padding: var(--space-sm) var(--space-lg);
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: var(--typography-font-size-sm);
+  color: var(--text-secondary);
+  text-align: start;
+  font-family: var(--typography-font-family-sans);
+  transition: background 0.1s;
+}
+
+.bt-calendar__preset-item:hover {
+  background: var(--bg-subtle);
+}
+
+.bt-calendar__preset-item--active {
+  color: var(--color-brand-primary-bold);
+  background: var(--bg-subtle);
+  font-weight: var(--typography-font-weight-semibold);
+}
+
+/* ── Preset chips (wrap row below the day grid) ─ */
+.bt-calendar__preset-chips {
+  contain: inline-size; /* prevent chips from expanding calendar width */
+  margin: 0 -16px; /* break out of bt-calendar__body 16px padding */
+  padding: var(--space-lg) var(--space-sm);
+  background: var(--bg-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  justify-content: center;
+}
+
+/* ── Footer (date display + action buttons) ──── */
+.bt-calendar__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.bt-calendar__footer--range {
+  flex-direction: row;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.bt-calendar__date-display {
+  text-align: center;
+  font-size: var(--typography-font-size-sm);
+  font-weight: 700;
+  color: var(--color-brand-primary);
+  font-family: var(--typography-font-family-sans);
+  min-height: 20px;
+}
+
+.bt-calendar__footer--range .bt-calendar__date-display {
+  flex: 1;
+  text-align: start;
+}
+
+.bt-calendar__footer-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.bt-calendar__footer-actions > * {
+  flex: 1;
+}
+
+.bt-calendar__footer--range .bt-calendar__footer-actions > * {
+  flex: none;
+}

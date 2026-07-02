@@ -1,0 +1,112 @@
+/* BTChartCard — organism wrapper for chart components.
+   Figma node 3404:2299 */
+
+.bt-chart-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+/* Card chrome (border + radius + padding). Removed via hasCard=false. */
+.bt-chart-card--has-card {
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  padding: var(--space-lg);
+  background: var(--bg-primary);
+}
+
+/* Header */
+.bt-chart-card__title {
+  font-size: var(--typography-font-size-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--typography-font-family-sans, "Geist", system-ui);
+  line-height: var(--typography-line-height-md, 24px);
+}
+
+.bt-chart-card__subtext {
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-family: var(--typography-font-family-sans, "Geist", system-ui);
+  margin-block-start: var(--space-xs);
+  line-height: var(--typography-line-height-xs, 16px);
+}
+
+.bt-chart-card__header-gap {
+  margin-block-end: var(--space-sm);
+}
+
+/* Summary row */
+.bt-chart-card__summary {
+  display: flex;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.bt-chart-card__summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.bt-chart-card__summary-label {
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-family: var(--typography-font-family-sans, "Geist", system-ui);
+  line-height: var(--typography-line-height-xs, 16px);
+}
+
+.bt-chart-card__summary-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2xs);
+}
+
+.bt-chart-card__summary-value {
+  font-size: var(--typography-font-size-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--typography-font-family-sans, "Geist", system-ui);
+  line-height: var(--typography-line-height-md, 24px);
+}
+
+.bt-chart-card__summary-unit {
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-family: var(--typography-font-family-sans, "Geist", system-ui);
+  line-height: var(--typography-line-height-xs, 16px);
+}
+
+/* Legend row — right-aligned, above chart */
+.bt-chart-card__legend {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.bt-chart-card__legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.bt-chart-card__legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.bt-chart-card__legend-label {
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-family: var(--typography-font-family-sans, "Geist", system-ui);
+  line-height: var(--typography-line-height-xs, 16px);
+}

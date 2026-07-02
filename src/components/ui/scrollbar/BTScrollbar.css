@@ -1,0 +1,76 @@
+/* BTScrollbar — custom scrollbar wrapper atom (Figma 2037:4)
+ *
+ * Applies btech-token scrollbar styling to an overflow container.
+ * Thumb: bg-subtlest (neutral-300), Track: bg-subtle (neutral-50).
+ * Width/height: 4px. Border-radius: radius-xs (4px).
+ *
+ * Usage:
+ *   Wrap any overflowing content in <BTScrollbar direction="y">.
+ *   The wrapper is display:block by default; set an explicit height on
+ *   the parent or the scrollbar itself for the scrollbar to appear.
+ */
+
+.bt-scrollbar {
+  /* layout defaults — caller controls size */
+  display: block;
+  overflow: hidden;
+}
+
+/* ── Direction variants ──────────────────────────────────────────────────── */
+
+.bt-scrollbar--x {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.bt-scrollbar--y {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.bt-scrollbar--both {
+  overflow: auto;
+}
+
+/* ── Firefox (scrollbar-width / scrollbar-color) ─────────────────────────── */
+
+.bt-scrollbar--x,
+.bt-scrollbar--y,
+.bt-scrollbar--both {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-subtlest) var(--bg-subtle);
+}
+
+/* ── Webkit (Chrome / Safari / Edge) ─────────────────────────────────────── */
+
+/* Vertical scrollbar */
+.bt-scrollbar--y::-webkit-scrollbar,
+.bt-scrollbar--both::-webkit-scrollbar {
+  width: 4px;
+}
+
+/* Horizontal scrollbar */
+.bt-scrollbar--x::-webkit-scrollbar,
+.bt-scrollbar--both::-webkit-scrollbar {
+  height: 4px;
+}
+
+.bt-scrollbar--x::-webkit-scrollbar-track,
+.bt-scrollbar--y::-webkit-scrollbar-track,
+.bt-scrollbar--both::-webkit-scrollbar-track {
+  background: var(--bg-subtle);
+  border-radius: var(--radius-xs);
+}
+
+.bt-scrollbar--x::-webkit-scrollbar-thumb,
+.bt-scrollbar--y::-webkit-scrollbar-thumb,
+.bt-scrollbar--both::-webkit-scrollbar-thumb {
+  background: var(--bg-subtlest);
+  border-radius: var(--radius-xs);
+}
+
+.bt-scrollbar--x::-webkit-scrollbar-thumb:hover,
+.bt-scrollbar--y::-webkit-scrollbar-thumb:hover,
+.bt-scrollbar--both::-webkit-scrollbar-thumb:hover {
+  background: var(--text-disabled);
+}

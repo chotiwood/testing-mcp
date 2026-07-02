@@ -1,0 +1,314 @@
+/* BTSidebar layout — Figma 2346-3623.
+   Item-level styles live in internal/BTSidebarItem.css.
+   All colours via @btech/tokens CSS vars — no hex fallbacks. */
+
+/* ── Root ──────────────────────────────────────────────────────────── */
+
+.bt-sidebar {
+  display: flex;
+  flex-direction: column;
+  /* 16px gap between every top-level section (header, search-row, nav, footer) */
+  gap: var(--space-lg);
+  /* Fixed open width — min/max enforce it even inside flex parents */
+  width: 258px;
+  min-width: 258px;
+  max-width: 258px;
+  height: 100%;
+  background: var(--bg-primary);
+  border-inline-end: 1px solid var(--border-primary);
+  /* Padding: 16px all sides in open state.
+     Sections no longer carry their own horizontal padding — aside owns it. */
+  padding: var(--space-lg);
+  transition: width 0.3s ease, min-width 0.3s ease, max-width 0.3s ease,
+              padding 0.3s ease;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.bt-sidebar--collapsed {
+  width: 64px;
+  min-width: 64px;
+  max-width: 64px;
+  /* Collapsed: no horizontal padding — items center themselves */
+  padding: var(--space-lg) 0;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+
+.bt-sidebar__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+  /* margin: sidebar gap: 16px handles section spacing */
+}
+
+.bt-sidebar--collapsed .bt-sidebar__header {
+  justify-content: center;
+  gap: 0;
+}
+
+.bt-sidebar__logo {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.bt-sidebar__header-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  max-width: 180px;
+  transition: opacity 0.2s ease, max-width 0.3s ease, flex 0.3s ease;
+}
+
+.bt-sidebar--collapsed .bt-sidebar__header-text {
+  opacity: 0;
+  max-width: 0;
+  flex: 0;
+  pointer-events: none;
+}
+
+.bt-sidebar__header-title {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 700;
+  line-height: var(--typography-line-height-sm);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bt-sidebar__header-desc {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Search + toggle row ────────────────────────────────────────────── */
+
+.bt-sidebar__search-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+  /* padding-bottom: sidebar gap: 16px handles section spacing */
+}
+
+.bt-sidebar--collapsed .bt-sidebar__search-row {
+  justify-content: center;
+}
+
+/* Wrapper gives BTInputSearch flex-1 behaviour */
+.bt-sidebar__search-wrapper {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  transition: opacity 0.2s ease, flex 0.3s ease;
+}
+
+/* Toggle icon — 16×16 Figma icon inside BTButton icon-only small. */
+.bt-sidebar__toggle-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+/* RTL: flip the directional arrow horizontally so |← becomes →| and →| becomes |←,
+   matching the sidebar's mirrored position on the right edge. */
+[dir="rtl"] .bt-sidebar__toggle-icon {
+  transform: scaleX(-1);
+}
+
+/* ── Navigation container ────────────────────────────────────────────── */
+
+.bt-sidebar__nav {
+  flex: 1;
+  overflow-y: auto;
+  /* Bleed nav to aside border edges so scrollbar sits flush at aside border,
+     not inside the 16px padding area. 16px horizontal padding restores the
+     aside content boundary — item backgrounds align with the search input. */
+  margin: 0 -16px;
+  padding: 0 var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.bt-sidebar__nav--scroll {
+  /* Thin scrollbar indicator when hasScroll=true */
+}
+
+.bt-sidebar--collapsed .bt-sidebar__nav {
+  /* Collapsed aside has padding: 16px 0 (no horizontal) — no negative margin needed */
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+/* Thin scrollbar */
+.bt-sidebar__nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.bt-sidebar__nav::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+  border-radius: var(--radius-xs);
+}
+
+.bt-sidebar__nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ── Item group wrapper (holds item row + children) ──────────────────── */
+
+.bt-sidebar__item-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* BTTooltip wrapper inside sidebar: stretch to fill nav width (overrides inline-flex shrink-wrap) */
+.bt-sidebar .bt-tooltip {
+  display: flex;
+  align-self: stretch;
+  min-width: 0;
+}
+
+/* Open sidebar: sidebar item must fill the full width of its BTTooltip trigger wrapper.
+   Without this, .bt-sidebar-item (display:flex) only takes content width inside
+   the flex-row .bt-tooltip container, so hover/active backgrounds don't span the row. */
+.bt-sidebar:not(.bt-sidebar--collapsed) .bt-tooltip > .bt-sidebar-item {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Divider ─────────────────────────────────────────────────────────── */
+
+.bt-sidebar__divider {
+  height: 1px;
+  background: var(--border-primary);
+}
+
+/* Collapsed: show a short centred line (32 px) instead of the full-width rule */
+.bt-sidebar--collapsed .bt-sidebar__divider {
+  width: 32px;
+  align-self: center;
+}
+
+/* ── Sub Title (section label) ───────────────────────────────────────── */
+
+.bt-sidebar__subtitle {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-block: 8px;
+  padding-inline-end: 4px;
+  padding-inline-start: 0; /* nav already gives 16px from border; no extra start indent needed */
+  white-space: nowrap;
+  overflow: hidden;
+  max-height: 36px;
+  transition: opacity 0.25s ease, max-height 0.3s ease, padding-block 0.3s ease;
+}
+
+.bt-sidebar--collapsed .bt-sidebar__subtitle {
+  opacity: 0;
+  max-height: 0;
+  padding-block: 0;
+  pointer-events: none;
+}
+
+/* ── Children expand/collapse container ──────────────────────────────── */
+
+.bt-sidebar__children {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 0;
+  gap: var(--space-lg);
+  padding-top: 0;
+  transition: max-height 0.25s ease, padding-top 0.25s ease;
+}
+
+.bt-sidebar__item-group--expanded > .bt-sidebar__children {
+  max-height: 2000px;
+  padding-top: var(--space-lg);
+}
+
+/* Collapsed: force all children shut */
+.bt-sidebar--collapsed .bt-sidebar__children {
+  max-height: 0;
+  padding-top: 0;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────── */
+
+.bt-sidebar__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+  /* padding-top: sidebar gap: 16px handles section spacing */
+}
+
+.bt-sidebar--collapsed .bt-sidebar__footer {
+  justify-content: center;
+  gap: 0;
+}
+
+/* BTAvatar (size="sm") handles its own 32×32 circle — no extra styles needed here. */
+
+.bt-sidebar__footer-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  flex: 1;
+  overflow: hidden;
+  max-width: 160px;
+  transition: opacity 0.2s ease, max-width 0.3s ease;
+}
+
+.bt-sidebar--collapsed .bt-sidebar__footer-text {
+  opacity: 0;
+  max-width: 0;
+  pointer-events: none;
+}
+
+.bt-sidebar__footer-name {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 700;
+  line-height: var(--typography-line-height-sm);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bt-sidebar__footer-email {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

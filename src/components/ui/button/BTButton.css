@@ -1,0 +1,184 @@
+/* BTButton styles — Figma 114:2645.
+   All colors via @btech/tokens CSS vars — no hex fallbacks. */
+
+.bt-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-sm);
+  border: none;                 /* base carries no border; outline/secondary-white add their own */
+  box-sizing: border-box;       /* explicit height/width declarations include border */
+  height: 40px;                 /* default height: py(12) + lh(16) + py(12) = 40px */
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  letter-spacing: 0;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.1s;
+  user-select: none;
+  outline: none;
+  appearance: none;  /* reset native <button> browser styles */
+}
+
+.bt-button:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+/* ── Small ── */
+.bt-button--small {
+  gap: var(--space-2xs);
+  padding: var(--space-sm);
+  height: 32px;                 /* small height: p(8) + lh(16) + p(8) = 32px */
+}
+
+/* ── Icon only — square ── */
+/* Figma: icon-only frames have no border — base border:none already handles this.
+   Width + height are explicit so DOM matches Figma exactly. */
+.bt-button--icon-only {
+  padding: var(--space-md);
+  width: 40px;                  /* 12 + 16 + 12 = 40px */
+  height: 40px;
+}
+
+.bt-button--icon-only.bt-button--small {
+  padding: var(--space-sm);     /* Figma --spacing.sm = 8px */
+  width: 32px;                  /* 8 + 16 + 8 = 32px */
+  height: 32px;
+}
+
+/* When iconOnly has a rightIcon/leftIcon addon (e.g. BTHint badge),
+   drop the fixed square size and let padding + content determine width. */
+.bt-button--icon-only.bt-button--has-addon {
+  width: unset;
+  height: unset;
+}
+
+.bt-button--icon-only.bt-button--has-addon.bt-button--small {
+  width: unset;
+  height: unset;
+}
+
+/* Force 16×16 icon for all icon-only sizes */
+.bt-button--icon-only img,
+.bt-button--icon-only svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.bt-button__label { flex-shrink: 0; }
+
+/* ── Primary ── */
+.bt-button--primary {
+  background: var(--color-brand-primary);
+  color: var(--text-inverse);
+}
+.bt-button--primary:hover:not(:disabled) {
+  background: var(--color-brand-primary-bold);
+}
+.bt-button--primary:active:not(:disabled) {
+  background: var(--color-brand-primary-bold);
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+.bt-button--primary:disabled {
+  background: var(--bg-subtlest);
+  color: var(--text-inverse);
+  cursor: not-allowed;
+}
+
+/* ── Secondary Light — neutral grey bg (bg.secondary) ── */
+.bt-button--secondary-light {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+.bt-button--secondary-light:hover:not(:disabled) {
+  background: var(--bg-subtler);
+}
+.bt-button--secondary-light:active:not(:disabled) {
+  background: var(--bg-subtlest);
+  box-shadow: inset 0 4px 4px rgba(58, 58, 58, 0.25);
+}
+.bt-button--secondary-light:disabled {
+  background: var(--bg-subtle);
+  color: var(--bg-subtlest);
+  cursor: not-allowed;
+}
+
+/* ── Secondary White — white bg + border ── */
+.bt-button--secondary-white {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+}
+.bt-button--secondary-white:hover:not(:disabled) {
+  background: var(--bg-secondary);
+}
+.bt-button--secondary-white:active:not(:disabled) {
+  background: var(--bg-subtler);
+  box-shadow: inset 0 4px 4px rgba(58, 58, 58, 0.25);
+}
+.bt-button--secondary-white:disabled {
+  background: var(--bg-primary);
+  color: var(--bg-subtlest);
+  border-color: var(--bg-subtlest);
+  cursor: not-allowed;
+}
+
+/* ── Destructive ── */
+.bt-button--destructive {
+  background: var(--color-ext-error);
+  color: var(--text-inverse);
+}
+.bt-button--destructive:hover:not(:disabled) {
+  background: var(--color-ext-error-bold);
+}
+.bt-button--destructive:active:not(:disabled) {
+  background: var(--color-ext-error-bold);
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+.bt-button--destructive:disabled {
+  background: var(--bg-subtlest);
+  color: var(--text-inverse);
+  cursor: not-allowed;
+}
+
+/* ── Outline ── */
+.bt-button--outline {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+}
+.bt-button--outline:hover:not(:disabled) {
+  background: var(--bg-subtle);
+}
+.bt-button--outline:active:not(:disabled) {
+  background: var(--bg-subtler);
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+.bt-button--outline:disabled {
+  color: var(--bg-subtlest);
+  border-color: var(--bg-subtlest);
+  cursor: not-allowed;
+}
+
+/* ── Ghost ── */
+.bt-button--ghost {
+  background: transparent;
+  color: var(--text-primary);
+}
+.bt-button--ghost:hover:not(:disabled) {
+  background: var(--bg-subtle);
+}
+.bt-button--ghost:active:not(:disabled) {
+  background: var(--bg-subtler);
+  box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+.bt-button--ghost:disabled {
+  color: var(--bg-subtlest);
+  cursor: not-allowed;
+}

@@ -1,0 +1,255 @@
+/*
+ * BTInputWithLabel — text input with static label pill(s) on left, right, or both.
+ *
+ * Shared by Vue (BTInputWithLabel.vue) and React (BTInputWithLabel.tsx).
+ *
+ * Figma node 368-6832.
+ *
+ * Layout (flex-row, height 48 px):
+ * ┌── field ──────────────────────────────────────────────────────────┐
+ * │ [left-pill?] │  label (14 px resting → 12 px float)  [×?] │ [right?] │
+ * │              │  input text (always 100 % of content area)  │          │
+ * └───────────────────────────────────────────────────────────────────┘
+ *
+ * Height arithmetic (box-sizing: border-box everywhere):
+ *   Field container: 48 px  →  inner: 46 px (1 px border each side)
+ *   Content area (align-self: stretch, border-box): 46 px outer
+ *     Resting:  no padding   →  inner 46 px; input height 46 px, text centred by browser
+ *     Floating: pad 8/8      →  inner 30 px; input height 30 px, padding-top 16 px
+ *       → label at outer-top + 8 px (in pad zone), input text at 8 + 16 = 24 px ✓
+ *
+ * Key rules:
+ *   • `box-sizing: border-box` on content area is mandatory — without it, padding
+ *     increases the outer height beyond 46 px and the field grows.
+ *   • Input uses `height: 100%` so it always fills the content area's inner height.
+ *   • Clear (×) is a SIBLING of the content area (not inside it) so it can use
+ *     `align-self: center` independent of the content padding.
+ */
+
+/* ── Outer wrapper ─────────────────────────────────────────────── */
+.bt-input-with-label__wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  font-family: var(--typography-font-family-sans);
+  width: 100%;
+}
+
+/* ── Field container ───────────────────────────────────────────── */
+.bt-input-with-label {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;                    /* pills + content fill full height */
+  height: 48px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  box-sizing: border-box;
+  padding: 0 8px;                          /* right/left spacing when no pill */
+  overflow: hidden;                        /* clip pill corners + any stray overflow */
+  transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Remove padding from the side that has a pill */
+.bt-input-with-label--has-left  { padding-inline-start: 0; }
+.bt-input-with-label--has-right { padding-inline-end: 0; }
+
+/* State colours */
+.bt-input-with-label--focused  { border-color: var(--color-brand-primary); }
+.bt-input-with-label--error    { border-color: var(--text-error); }
+.bt-input-with-label--disabled { background: var(--bg-subtle); cursor: not-allowed; }
+
+/* ── Label pill ────────────────────────────────────────────────── */
+/* align-self: stretch (inherited from container) fills full height automatically */
+.bt-input-with-label__pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 8px;
+  background: var(--bg-subtle);
+  flex-shrink: 0;
+}
+
+/* Outer corners only — inner edge flush with field border (logical for RTL) */
+.bt-input-with-label__pill--left  {
+  border-start-start-radius: var(--radius-sm);
+  border-end-start-radius:   var(--radius-sm);
+  border-start-end-radius:   0;
+  border-end-end-radius:     0;
+}
+.bt-input-with-label__pill--right {
+  border-start-start-radius: 0;
+  border-end-start-radius:   0;
+  border-start-end-radius:   var(--radius-sm);
+  border-end-end-radius:     var(--radius-sm);
+}
+
+.bt-input-with-label--disabled .bt-input-with-label__pill {
+  background: var(--bg-subtler);
+}
+
+.bt-input-with-label__pill-text {
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-primary);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.bt-input-with-label--disabled .bt-input-with-label__pill-text {
+  color: var(--text-disabled);
+}
+
+/* ── Content area ──────────────────────────────────────────────── */
+/*
+ * CRITICAL: box-sizing must be border-box.
+ * Without it, padding-top/bottom when floating adds to the outer height
+ * (content-box outer = stretch-height + padding), breaking the 48 px constraint.
+ * With border-box, padding is INSIDE the stretch-given height (46 px), so
+ * inner = 46 − 8 − 8 = 30 px, and the field stays at exactly 48 px.
+ */
+.bt-input-with-label__content {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;                  /* ← mandatory, see note above */
+  padding-inline-start: var(--space-xs);
+  padding-inline-end: var(--space-xs);
+  transition: padding-top  150ms cubic-bezier(0.4, 0, 0.2, 1),
+              padding-bottom 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* When label is floating — add top/bottom breathing room */
+.bt-input-with-label__content--floating {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* ── Floating label ────────────────────────────────────────────── */
+.bt-input-with-label__label {
+  position: absolute;
+  inset-inline-start: var(--space-xs);
+  inset-inline-end: var(--space-xs);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  letter-spacing: 0;
+  color: var(--text-secondary);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: top 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              font-size 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*
+ * Floating: label at top: 8 px from content area outer edge.
+ * Content area padding-top is also 8 px → label sits in the padding zone.
+ * Input text is at 8 px (pad) + 16 px (input pad-top) = 24 px from outer. ✓
+ */
+.bt-input-with-label__label--floating {
+  top: var(--space-sm);
+  transform: none;
+  font-size: var(--typography-font-size-xs);
+}
+
+.bt-input-with-label--focused  .bt-input-with-label__label--floating { color: var(--color-brand-primary); }
+.bt-input-with-label--error    .bt-input-with-label__label           { color: var(--text-error); }
+.bt-input-with-label--disabled .bt-input-with-label__label           { color: var(--text-disabled); }
+
+.bt-input-with-label__label-required {
+  color: var(--text-error);
+  margin-inline-start: var(--space-2xs);
+}
+
+/* ── Input field ───────────────────────────────────────────────── */
+/*
+ * height: 100% fills the content area's inner height.
+ *   Resting:  inner = 46 px → input 46 px; browser centres single-line text. ✓
+ *   Floating: inner = 30 px → input 30 px; padding-top 16 px → text at 8+16=24 px. ✓
+ */
+.bt-input-with-label__field {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  letter-spacing: 0;
+  color: var(--text-primary);
+  padding: 0;
+  height: 100%;
+}
+
+.bt-input-with-label__field::placeholder {
+  color: var(--text-secondary);
+}
+
+.bt-input-with-label--disabled .bt-input-with-label__field {
+  cursor: not-allowed;
+  color: var(--text-disabled);
+}
+
+/* When label is floating: shift input text below the 16 px floating label */
+.bt-input-with-label__content--floating .bt-input-with-label__field {
+  padding-top: 16px;
+}
+
+/* ── Clear (×) button ──────────────────────────────────────────── */
+/*
+ * Sibling of content area (NOT inside it) so it can use align-self: center
+ * and stay vertically centred in the full 46 px field height regardless of
+ * whether the label is floating.
+ */
+.bt-input-with-label__clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: center;                      /* stays centred even when content has padding */
+  background: none;
+  border: none;
+  padding: 0;
+  margin-inline-start: var(--space-xs);
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  color: var(--icon-primary);
+}
+
+.bt-input-with-label__clear img,
+.bt-input-with-label__clear svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* ── Helper / error text ───────────────────────────────────────── */
+.bt-input-with-label__helper {
+  display: flex;
+  gap: var(--space-sm);
+  padding: 0 8px;
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+}
+
+.bt-input-with-label__helper-text        { flex: 1; color: var(--text-secondary); }
+.bt-input-with-label__helper-text--error { color: var(--text-error); }
+
+.bt-input-with-label__counter {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}

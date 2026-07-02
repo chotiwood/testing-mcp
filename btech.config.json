@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ramams06.github.io/btech-registry/schema/config.json",
+  "framework": "react",
+  "registry": "https://ramams06.github.io/btech-registry",
+  "tokens": "@btech/tokens",
+  "aliases": {
+    "components": "@/components",
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "utils": "@/lib/utils"
+  },
+  "tsx": true,
+  "flutterBase": "lib/widgets/btech"
+}

@@ -1,0 +1,100 @@
+/* BTCircleChart — custom-SVG pie / donut / donutRounded */
+
+.bt-circle-chart {
+  position: relative;
+  display: inline-block;
+}
+
+.bt-circle-chart__svg {
+  display: block;
+  overflow: visible;
+}
+
+/* Entrance — badge labels + connector lines fade in alongside the clockwise
+   segment sweep (the sweep itself is driven in JS via the geometry reveal). */
+.bt-circle-chart__labels,
+.bt-circle-chart__connector-line {
+  animation: bt-circle-chart-fade 600ms ease-out both;
+}
+
+@keyframes bt-circle-chart-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bt-circle-chart__labels,
+  .bt-circle-chart__connector-line {
+    animation: none;
+  }
+}
+
+/* Segment group — pops outward along its mid-angle when active. */
+.bt-circle-chart__segment {
+  cursor: pointer;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 120ms ease-out;
+}
+
+/* Arc stroke is the hit area; wedge fill is hittable by default. */
+.bt-circle-chart__segment path {
+  pointer-events: visiblePainted;
+}
+
+/* Connector lines (ring edge → badge). */
+.bt-circle-chart__connector-line {
+  stroke: var(--border-primary);
+  stroke-width: 1;
+  fill: none;
+  pointer-events: none;
+}
+
+/* External badge labels overlay. */
+.bt-circle-chart__labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bt-circle-chart__badge {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.bt-circle-chart__badge-label {
+  font-size: var(--typography-font-size-2xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-family: var(--typography-font-family-sans, "Geist", system-ui);
+}
+
+.bt-circle-chart__badge-value {
+  font-size: var(--typography-font-size-2xs);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--typography-font-family-sans, "Geist", system-ui);
+}
+
+/* Tooltip anchor — a 0×0 point on the ring the BTTooltip attaches to. */
+.bt-circle-chart__tip {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.bt-circle-chart__tip-anchor {
+  display: block;
+  width: 0;
+  height: 0;
+}

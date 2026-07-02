@@ -1,0 +1,157 @@
+/* BTAlert styles — Figma 681:11285 (light) · 4799:3868 (dark) */
+
+/* ── Root ── */
+.bt-alert {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bt-alert--with-description {
+  align-items: flex-start;
+  padding: var(--space-sm);
+}
+
+/* ── Variant backgrounds & borders ── */
+.bt-alert--info {
+  background: var(--color-ext-info-subtler);
+  border: 1px solid var(--color-ext-info-bold);
+}
+.bt-alert--success {
+  background: var(--color-ext-success-subtler);
+  border: 1px solid var(--color-ext-success-bold);
+}
+.bt-alert--error {
+  background: var(--color-ext-error-subtler);
+  border: 1px solid var(--color-ext-error-bold);
+}
+.bt-alert--warning {
+  background: var(--color-ext-warning-subtler);
+  border: 1px solid var(--color-ext-warning-bold);
+}
+.bt-alert--neutral {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+}
+.bt-alert--neutral-dark {
+  background: var(--bg-inverse);
+  border: none;
+}
+
+/* ── Icon ── */
+.bt-alert__icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bt-alert--info         .bt-alert__icon { color: var(--icon-info); }
+.bt-alert--success      .bt-alert__icon { color: var(--icon-success); }
+.bt-alert--error        .bt-alert__icon { color: var(--icon-error); }
+.bt-alert--warning      .bt-alert__icon { color: var(--icon-warning); }
+.bt-alert--neutral      .bt-alert__icon { color: var(--icon-primary); }
+.bt-alert--neutral-dark .bt-alert__icon { color: var(--icon-inverse); }
+
+/* ── Body ── */
+.bt-alert__body {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.bt-alert--with-description .bt-alert__body {
+  gap: var(--space-xs);
+}
+
+/* ── Label ── */
+.bt-alert__label {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-sm);
+  line-height: var(--typography-line-height-xs);
+  letter-spacing: 0;
+  font-weight: 500;
+  margin: 0;
+}
+
+.bt-alert--with-description .bt-alert__label {
+  font-weight: 700;
+}
+
+.bt-alert--info         .bt-alert__label { color: var(--text-info); }
+.bt-alert--success      .bt-alert__label { color: var(--text-success); }
+.bt-alert--error        .bt-alert__label { color: var(--text-error); }
+.bt-alert--warning      .bt-alert__label { color: var(--text-warning); }
+.bt-alert--neutral      .bt-alert__label { color: var(--text-primary); }
+.bt-alert--neutral-dark .bt-alert__label { color: var(--text-inverse); }
+
+/* ── Description ── */
+.bt-alert__description {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-xs);
+  line-height: var(--typography-line-height-xs);
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.bt-alert--neutral-dark .bt-alert__description {
+  color: var(--text-inverse);
+}
+
+/* ── Action — BTButtonLink (no description): layout + per-variant color override ── */
+.bt-alert__action-link {
+  flex-shrink: 0;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.bt-alert--info         .bt-alert__action-link { color: var(--text-info); }
+.bt-alert--success      .bt-alert__action-link { color: var(--text-success); }
+.bt-alert--error        .bt-alert__action-link { color: var(--text-error); }
+.bt-alert--warning      .bt-alert__action-link { color: var(--text-warning); }
+.bt-alert--neutral      .bt-alert__action-link { color: var(--text-primary); }
+.bt-alert--neutral-dark .bt-alert__action-link { color: var(--text-inverse); }
+
+/* ── Action — BTButton wrapper (with description): pin to top of flex ── */
+.bt-alert__action-wrap {
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+/* ── Dismiss button ── */
+.bt-alert__dismiss {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  /* Expand touch target to 32×32 without affecting layout spacing */
+  padding: 8px;
+  margin: -8px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.bt-alert--with-description .bt-alert__dismiss {
+  /* Align dismiss to top of multi-line content, compensate padding */
+  margin-block-start: -8px;
+}
+
+.bt-alert--info         .bt-alert__dismiss { color: var(--icon-info); }
+.bt-alert--success      .bt-alert__dismiss { color: var(--icon-success); }
+.bt-alert--error        .bt-alert__dismiss { color: var(--icon-error); }
+.bt-alert--warning      .bt-alert__dismiss { color: var(--icon-warning); }
+.bt-alert--neutral      .bt-alert__dismiss { color: var(--icon-primary); }
+.bt-alert--neutral-dark .bt-alert__dismiss { color: var(--icon-inverse); }

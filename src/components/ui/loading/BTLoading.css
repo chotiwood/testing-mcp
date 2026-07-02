@@ -1,0 +1,123 @@
+/* BTLoading — multi-type loading indicator atom (Figma 3227:400). */
+
+/* ── Lottie container (spinner / pulse / logo) ──────────────────────── */
+.bt-loading--lottie {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Spinner & pulse — theme-aware Lottie; CSS toggles light/dark via [data-mode="dark"] */
+.bt-loading--lottie-themed {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.bt-loading--lottie-themed .bt-loading--lottie {
+  position: absolute;
+  inset: 0;
+}
+
+.bt-loading--lottie--dark {
+  display: none;
+}
+
+[data-mode="dark"] .bt-loading--lottie--light {
+  display: none;
+}
+
+[data-mode="dark"] .bt-loading--lottie--dark {
+  display: block;
+}
+
+/* ── Skeleton shimmer block (Figma 3227:400 light · 4666:2016 dark) ─── */
+/* Base: bg.subtler · Shimmer peak: bg.primary — tokens swap via [data-mode="dark"] */
+.bt-loading--skeleton {
+  background: var(--bg-subtler);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Sweep gradient overlay — animates from left to right */
+.bt-loading--skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--bg-primary) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: bt-loading-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes bt-loading-shimmer {
+  to {
+    transform: translateX(200%);
+  }
+}
+
+/* ── Progress bar ────────────────────────────────────────────────────── */
+.bt-loading--progressbar {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  background: color-mix(
+    in srgb,
+    var(--bt-loading-color, var(--color-brand-primary)) 10%,
+    transparent
+  );
+  border-radius: var(--radius-rd);
+  overflow: hidden;
+}
+
+.bt-loading__progressbar-bar {
+  position: absolute;
+  top: 0;
+  inset-inline-start: 0;
+  height: 100%;
+  border-radius: var(--radius-rd);
+  background: var(--bt-loading-color, var(--color-brand-primary));
+  transition: width 300ms ease;
+}
+
+/* Indeterminate: bar slides across the track */
+.bt-loading__progressbar-bar--indeterminate {
+  width: 35%;
+  animation: bt-loading-indeterminate 1.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes bt-loading-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(386%);
+  }
+}
+
+@keyframes bt-loading-indeterminate-rtl {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-386%);
+  }
+}
+
+[dir="rtl"] .bt-loading__progressbar-bar--indeterminate {
+  animation-name: bt-loading-indeterminate-rtl;
+}
+
+@keyframes bt-loading-shimmer-rtl {
+  to {
+    transform: translateX(-200%);
+  }
+}
+
+[dir="rtl"] .bt-loading--skeleton::after {
+  transform: translateX(100%);
+  animation-name: bt-loading-shimmer-rtl;
+}

@@ -1,0 +1,256 @@
+/* Clear-button slide-in / slide-out animation — shared canonical definition */
+@import '../BTInputClear.css';
+
+/*
+ * BTInputDate — click-to-open date / date-range picker.
+ * Figma node 543-2651.
+ *
+ * Layout follows BTInput exactly — position:relative on the field div,
+ * label is position:absolute inside it. No inner content wrapper.
+ *
+ * Visual structure (flex-row, height 50px — same as BTInput):
+ * ┌── field (position:relative) ──────────────────────────────────┐
+ * │  [📅 16px]  │  label (absolute, resting↔floating)  │  value  │ [×?] │
+ * └────────────────────────────────────────────────────────────────┘
+ */
+
+/* ── Outer wrapper ───────────────────────────────────────────── */
+.bt-input-date__wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  font-family: var(--typography-font-family-sans);
+  width: 100%;
+}
+
+/* ── Field row ───────────────────────────────────────────────── */
+/*
+ * position: relative — required so the absolute label is positioned
+ * relative to this field div, not a parent. Mirrors BTInput exactly.
+ */
+.bt-input-date {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 48px;                  /* Figma Default size: 48px */
+  box-sizing: border-box;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  padding: 0 8px;
+  gap: var(--space-sm);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* When label is floating: add breathing room (mirrors BTInput--label-floating) */
+.bt-input-date--label-floating {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* States */
+.bt-input-date--open     { border-color: var(--color-brand-primary); }
+.bt-input-date--error    { border-color: var(--text-error); }
+.bt-input-date--disabled {
+  background: var(--bg-subtle);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Calendar icon ───────────────────────────────────────────── */
+.bt-input-date__icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--icon-primary);
+}
+
+.bt-input-date__icon img,
+.bt-input-date__icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.bt-input-date--open     .bt-input-date__icon { color: var(--color-brand-primary); }
+.bt-input-date--error    .bt-input-date__icon { color: var(--text-error); }
+.bt-input-date--disabled .bt-input-date__icon { color: var(--text-disabled); }
+
+/* ── Floating label ──────────────────────────────────────────── */
+/*
+ * position: absolute inside the position:relative field div.
+ * left: 32px = 8px(pad) + 16px(icon) + 8px(gap) — mirrors BTInput with prefix.
+ * Resting: centered vertically. Floating: small at top.
+ */
+.bt-input-date__label {
+  position: absolute;
+  pointer-events: none;
+  inset-inline-start: var(--space-2xl);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 56px); /* 32px start + 16px clear + 8px gap */
+  transition: top        150ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform  150ms cubic-bezier(0.4, 0, 0.2, 1),
+              font-size  150ms cubic-bezier(0.4, 0, 0.2, 1),
+              color      150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bt-input-date--label-floating .bt-input-date__label {
+  top: var(--space-sm);
+  transform: none;
+  font-size: var(--typography-font-size-xs);
+}
+
+/* Label color per state */
+.bt-input-date--open     .bt-input-date__label { color: var(--color-brand-primary); }
+.bt-input-date--error    .bt-input-date__label { color: var(--text-error); }
+.bt-input-date--disabled .bt-input-date__label { color: var(--text-disabled); }
+
+.bt-input-date__label-required {
+  color: var(--text-error);
+  margin-inline-start: var(--space-2xs);
+}
+
+/* ── Value / placeholder text ────────────────────────────────── */
+/*
+ * flex: 1; height: 100% — fills available flex space, same as BTInput__field.
+ * When floating: padding-top: 16px pushes text below the floating label.
+ *   Container top padding (8px) + value padding-top (16px) = 24px from field top.
+ *   Floating label: top 8px + line-height 16px = ends at 24px. Perfect alignment.
+ */
+.bt-input-date__value {
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: padding-top 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* When floating: push text down below the floating label.
+   padding-top 14px (not 16) gives 2px breathing room for font descenders at 48px height. */
+.bt-input-date--label-floating .bt-input-date__value {
+  padding-top: 14px;
+  align-items: flex-start;
+}
+
+/* Placeholder state (open but no value) */
+.bt-input-date__value--placeholder {
+  color: var(--text-secondary);
+}
+
+.bt-input-date--disabled .bt-input-date__value { color: var(--text-disabled); }
+
+/* ── Clear (×) button ────────────────────────────────────────── */
+.bt-input-date__clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  color: var(--icon-primary);
+}
+
+.bt-input-date__clear img,
+.bt-input-date__clear svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* ── Helper / error text ─────────────────────────────────────── */
+.bt-input-date__helper {
+  display: flex;
+  gap: var(--space-sm);
+  padding: 0 8px;
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+}
+
+.bt-input-date__helper-text        { flex: 1; color: var(--text-secondary); }
+.bt-input-date__helper-text--error { color: var(--text-error); }
+
+/* ── Small variant (size="small") ───────────────────────────────
+ * ~40 px auto height.
+ * Empty: py-12px  |  Floating: py-4px
+ * Value text: 12 px (instead of 14 px for default).
+ * Figma: size=Small in node 543-2651.
+ */
+.bt-input-date--small {
+  height: auto;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              padding     150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bt-input-date--small.bt-input-date--label-floating {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+/* In small floating state, label hugs the top edge at 4 px */
+.bt-input-date--small.bt-input-date--label-floating .bt-input-date__label {
+  top: var(--space-xs);
+}
+
+/* Value: auto height (no 100% — container has no fixed height in small) */
+.bt-input-date--small .bt-input-date__value {
+  height: auto;
+  font-size: var(--typography-font-size-xs);
+}
+
+/* Push value text below floating label */
+.bt-input-date--small.bt-input-date--label-floating .bt-input-date__value {
+  padding-top: 16px;
+  align-items: flex-start;
+}
+
+/* ── Calendar panel (teleported to body) ─────────────────────── */
+.bt-input-date__panel {
+  position: fixed;
+  z-index: 1000;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+  overflow: auto;
+  max-height: calc(100vh - 32px);
+  /* Hidden until JS positions it */
+  opacity: 0;
+}
+
+.bt-input-date__panel--visible {
+  animation: bt-input-date-panel-in 150ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes bt-input-date-panel-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+

@@ -1,0 +1,211 @@
+/* BTSidebarItem — Figma 159-1729.
+   All colours via @btech/tokens CSS vars — no hex fallbacks. */
+
+/* ── Base row ───────────────────────────────────────────────────────── */
+
+.bt-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+  position: relative;
+}
+
+/* ── Type-specific padding ──────────────────────────────────────────── */
+
+/* Main: p-8px (all sides equal) */
+.bt-sidebar-item--main {
+  padding: var(--space-sm);
+}
+
+/* Submenu: indented left side */
+.bt-sidebar-item--submenu {
+  padding: var(--space-sm);
+}
+
+/* Sub Submenu: deeper indent — fixed, no shift on hover/disabled */
+.bt-sidebar-item--sub-submenu {
+  padding: var(--space-sm) var(--space-sm) var(--space-sm) var(--space-xl);
+}
+
+/* ── Interactive states ─────────────────────────────────────────────── */
+
+.bt-sidebar-item:hover:not(.bt-sidebar-item--active):not(.bt-sidebar-item--disabled) {
+  background: var(--bg-secondary);
+}
+
+.bt-sidebar-item--active {
+  background: var(--color-brand-primary-subtle);
+}
+
+.bt-sidebar-item--disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Collapsed sidebar: 32×32 icon-only pill, hide submenu rows ─────── */
+
+.bt-sidebar-item--collapsed.bt-sidebar-item--main {
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: var(--space-sm);
+  gap: 0; /* suppress gap so label (0px) doesn't push icon off-center */
+  align-self: center; /* center within the flex-column sidebar nav */
+}
+
+.bt-sidebar-item--collapsed.bt-sidebar-item--submenu,
+.bt-sidebar-item--collapsed.bt-sidebar-item--sub-submenu {
+  display: none;
+}
+
+/* ── Icon (Main items) — rendered as CSS mask so color is fully state-driven ── */
+
+.bt-sidebar-item__icon {
+  /* Mask-based icon: background-color = the visible icon color.
+     The SVG data-URI is used as a shape mask — its own stroke/fill colors are ignored.
+     Only the alpha channel of the SVG determines which pixels are colored. */
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background-color: var(--text-primary);   /* default: dark text color */
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transition: background-color 0.15s;
+}
+
+/* Active → brand primary */
+.bt-sidebar-item--active .bt-sidebar-item__icon {
+  background-color: var(--color-brand-primary);
+}
+
+/* Hover (non-active, non-disabled) → brand primary */
+.bt-sidebar-item:hover:not(.bt-sidebar-item--active):not(.bt-sidebar-item--disabled)
+  .bt-sidebar-item__icon {
+  background-color: var(--color-brand-primary);
+}
+
+/* Disabled → disabled token */
+.bt-sidebar-item--disabled .bt-sidebar-item__icon {
+  background-color: var(--text-disabled);
+}
+
+/* ── Dot indicator (Submenu / Sub Submenu) ──────────────────────────── */
+
+.bt-sidebar-item__dot {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bt-sidebar-item__dot::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  transition: background 0.15s;
+}
+
+/* Active dot */
+.bt-sidebar-item--active .bt-sidebar-item__dot::after {
+  background: var(--color-brand-primary);
+}
+
+/* Hover dot */
+.bt-sidebar-item:hover:not(.bt-sidebar-item--disabled) .bt-sidebar-item__dot::after {
+  background: var(--color-brand-primary);
+}
+
+/* Disabled dot */
+.bt-sidebar-item--disabled .bt-sidebar-item__dot::after {
+  background: var(--text-disabled);
+}
+
+/* ── Label ──────────────────────────────────────────────────────────── */
+
+.bt-sidebar-item__label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-primary);
+  transition: opacity 0.2s ease, max-width 0.3s ease, color 0.15s;
+}
+
+/* Submenu / Sub Submenu: smaller text */
+.bt-sidebar-item--submenu .bt-sidebar-item__label,
+.bt-sidebar-item--sub-submenu .bt-sidebar-item__label {
+  font-size: var(--typography-font-size-xs);
+  line-height: var(--typography-line-height-xs);
+}
+
+/* Active label: brand primary, bolder weight */
+.bt-sidebar-item--active .bt-sidebar-item__label {
+  color: var(--color-brand-primary);
+  font-weight: 700;
+}
+
+/* Active Submenu / Sub Submenu: 600 weight */
+.bt-sidebar-item--active.bt-sidebar-item--submenu .bt-sidebar-item__label,
+.bt-sidebar-item--active.bt-sidebar-item--sub-submenu .bt-sidebar-item__label {
+  font-weight: 600;
+}
+
+/* Disabled label */
+.bt-sidebar-item--disabled .bt-sidebar-item__label {
+  color: var(--text-disabled);
+}
+
+/* Hover label (non-active, non-disabled) */
+.bt-sidebar-item:hover:not(.bt-sidebar-item--active):not(.bt-sidebar-item--disabled)
+  .bt-sidebar-item__label {
+  color: var(--color-brand-primary);
+}
+
+/* Collapsed: hide labels */
+.bt-sidebar-item--collapsed .bt-sidebar-item__label {
+  opacity: 0;
+  max-width: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ── Chevron ────────────────────────────────────────────────────────── */
+
+.bt-sidebar-item__chevron {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Expanded: chevron rotates 90° */
+.bt-sidebar-item--expanded .bt-sidebar-item__chevron {
+  transform: rotate(90deg);
+}
+
+/* Collapsed: hide chevron */
+.bt-sidebar-item--collapsed .bt-sidebar-item__chevron {
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+}

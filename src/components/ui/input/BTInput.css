@@ -1,0 +1,152 @@
+/* Clear-button slide-in / slide-out animation — shared canonical definition */
+@import './BTInputClear.css';
+
+.bt-input__wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);                                         /* spacing.xs — replaces margin-top on helper */
+  font-family: var(--typography-font-family-sans);
+}
+
+.bt-input {
+  position: relative;
+  height: 50px;                    /* Figma: 1px border + 16px pad + 16px content + 16px pad + 1px border = 50px */
+  box-sizing: border-box;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);                        /* spacing.sm — replaces individual prefix/suffix margins */
+  padding: 0 8px;                  /* spacing.sm */
+  font-family: var(--typography-font-family-sans);
+  transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bt-input--multiline {
+  height: auto;
+  min-height: 100px;
+  padding: 8px;
+  align-items: flex-start;
+}
+
+/* When label is floating: add breathing room at top & bottom so border
+   isn't flush against the floating label or the text below it.
+   Icons remain vertically centred in the 32px content area (align-items:center). */
+.bt-input--label-floating {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.bt-input--focused {
+  border-color: var(--color-brand-primary);
+  /* NO box-shadow — Figma shows only border-color change */
+}
+
+.bt-input--error {
+  border-color: var(--text-error);
+}
+
+.bt-input--disabled {
+  background: var(--bg-subtle);
+  cursor: not-allowed;
+}
+
+.bt-input__prefix,
+.bt-input__suffix {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.bt-input__icon-btn {
+  background: none; border: none; padding: 0; cursor: pointer;
+  display: flex; align-items: center;
+  color: var(--icon-primary);
+}
+.bt-input__icon-btn img,
+.bt-input__icon-btn svg { width: 16px; height: 16px; display: block; }
+
+.bt-input__field {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-sm);          /* fontSize.sm */
+  font-weight: 500;         /* body/regular — Geist Medium */
+  line-height: var(--typography-line-height-xs);        /* lineHeight.xs */
+  letter-spacing: 0;        /* letterSpacing.normal */
+  color: var(--text-primary);
+  padding: 0;
+  transition: padding-top 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bt-input__field::placeholder { color: var(--text-secondary); }
+.bt-input--disabled .bt-input__field { color: var(--text-disabled); cursor: not-allowed; }
+
+/* When label is floating: push input text below the floating label.
+   Container now supplies 8px top padding → field only needs 16px extra.
+   Total from border: 1 + 8(container-pad) + 16(field-pad) = 25px ✓  (same cursor y as before) */
+.bt-input--with-label.bt-input--label-floating .bt-input__field {
+  padding-top: 16px;
+}
+
+.bt-input--multiline .bt-input__field {
+  resize: vertical;
+  min-height: 84px;
+  height: auto;
+  padding-top: 0;
+}
+
+/* Multiline with floating label — label is absolute-positioned, input doesn't need padding-top shift */
+.bt-input--multiline.bt-input--with-label.bt-input--label-floating .bt-input__field {
+  padding-top: 8px;   /* small top padding for comfort inside textarea, NOT 24px */
+}
+
+/* Label */
+.bt-input__label {
+  position: absolute;
+  pointer-events: none;
+  inset-inline-start: var(--space-sm);           /* spacing.sm — was 12px */
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--typography-font-size-sm);                  /* fontSize.sm */
+  font-weight: 500;                 /* body/regular */
+  line-height: var(--typography-line-height-xs);
+  letter-spacing: 0;
+  color: var(--text-secondary);
+  transition: top 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              font-size 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              font-weight 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bt-input--with-prefix .bt-input__label { inset-inline-start: var(--space-2xl); }  /* 8px(pad) + 16px(icon) + 8px(gap) = 32px */
+.bt-input--label-floating .bt-input__label {
+  top: var(--space-sm);           /* spacing.sm */
+  transform: none;
+  font-size: var(--typography-font-size-xs);    /* fontSize.xs */
+  font-weight: 500;   /* body/small — Geist Medium */
+}
+.bt-input--focused .bt-input__label { color: var(--color-brand-primary); }
+.bt-input--error .bt-input__label { color: var(--text-error); }
+.bt-input--disabled .bt-input__label { color: var(--text-disabled); }
+.bt-input__label-required { color: var(--text-error); margin-inline-start: var(--space-2xs); }
+
+/* Helper text + counter */
+.bt-input__helper {
+  display: flex;
+  gap: var(--space-sm);
+  padding: 0 8px;           /* align with field content — spacing.sm */
+  font-size: var(--typography-font-size-xs);          /* fontSize.xs */
+  font-weight: 500;         /* body/small */
+  line-height: var(--typography-line-height-xs);
+  letter-spacing: 0;
+}
+.bt-input__helper-text { flex: 1; color: var(--text-secondary); }
+.bt-input__helper-text--error { color: var(--text-error); }
+.bt-input__counter { color: var(--text-secondary); flex-shrink: 0; }
+
+/* ── RTL: cursor/caret at inline-start (right in RTL) ──────────────────── */
+[dir="rtl"] .bt-input__field { direction: rtl; }

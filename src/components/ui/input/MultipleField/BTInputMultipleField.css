@@ -1,0 +1,299 @@
+/* Clear-button slide-in / slide-out animation — shared canonical definition */
+@import '../BTInputClear.css';
+
+/*
+ * BTInputMultipleField — multi-value tag input with overlay dropdown.
+ *
+ * Shared by Vue (BTInputMultipleField.vue) and React (BTInputMultipleField.tsx).
+ *
+ * Figma node 555-4109.
+ *
+ * Layout (flex-row):
+ * ┌── field ─────────────────────────────────────────────────┐
+ * │  [content flex-1]                     [actions flex-none] │
+ * │   label (14px resting → 12px float)   [clear-all?]        │
+ * │   body (tags + cursor)                [chevron↓ / ↑]      │
+ * └───────────────────────────────────────────────────────────┘
+ *
+ * Height:
+ *  Resting (no content, not focused): min-height 48px, align-items:center
+ *    → label (20px) is vertically centered
+ *  Expanded (label floating):
+ *    → wrap type:  py-6, height grows with tag rows
+ *    → scroll type: py-6, height locked at 48px (6+16label+20body+6=48)
+ */
+
+/* ─── Outer wrapper ─────────────────────────────────────────────────────── */
+.bt-input-multiple-field__wrapper {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--typography-font-family-sans);
+  width: 100%;
+}
+
+/* ─── Field container ────────────────────────────────────────────────────── */
+/*
+ * Height stays at 48px in all states (wrap single-row + scroll):
+ *
+ * No py-6 trick needed. Simply:
+ *   min-height: 48px + align-items: center
+ *
+ * • Resting: content = label (20px). max(48, 20) = 48px, centered → 14px top/bottom ✓
+ * • Active-empty: content = label(16px) + body(20px) = 36px. max(48, 36) = 48px, centered → 6px top/bottom ✓
+ * • 1-row tags: same as active-empty = 48px ✓
+ * • Multi-row tags (wrap only): content > 48px → container grows naturally ✓
+ *
+ * No transition arithmetic. min-height is the floor. align-items:center does the centering.
+ */
+.bt-input-multiple-field {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  min-height: 48px;
+  padding: 0 8px;
+  gap: var(--space-sm);
+  box-sizing: border-box;
+  cursor: text;
+  transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth height growth when tags wrap to a new row (JS sets explicit px height). */
+.bt-input-multiple-field--wrap {
+  transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              height 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*
+ * When the label is floating (active OR has content), apply 4px vertical
+ * padding so multi-row tag rows have breathing room from the border.
+ *
+ * Why 4px (not 6px):
+ *   At transition frame-0, label is still 20px (hasn't animated yet) and
+ *   the body (20px) just became visible. Total = 4 + 20 + 20 + 4 = 48px —
+ *   exactly the min-height, so height never jumps. Using 6px would give
+ *   6 + 20 + 20 + 6 = 52px → a visible 4px pop on click.
+ *
+ * :has() — Chrome 105+, Firefox 121+, Safari 15.4+ (all browsers we target).
+ * Scroll type is excluded because height: 48px already clips any overflow.
+ */
+.bt-input-multiple-field:not(.bt-input-multiple-field--scroll):has(
+  .bt-input-multiple-field__label--floating
+) {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+/* Scroll type: lock at 48px, clip overflow */
+.bt-input-multiple-field--scroll {
+  height: 48px;
+  overflow: hidden;
+}
+
+/* Border colours */
+.bt-input-multiple-field--focused  { border-color: var(--color-brand-primary); }
+.bt-input-multiple-field--error    { border-color: var(--text-error); }
+.bt-input-multiple-field--disabled { background: var(--bg-subtle); cursor: not-allowed; }
+
+/* ─── Content column ────────────────────────────────────────────────────── */
+.bt-input-multiple-field__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;                       /* label and body are flush — no gap */
+}
+
+/* ─── Label (inline, not absolute) ─────────────────────────────────────── */
+/* Resting: 14px/20px, color text-secondary, sitting in the middle of the field
+   Floating: 12px/16px, shrinks above the tags row */
+.bt-input-multiple-field__label {
+  font-size: var(--typography-font-size-sm);
+  line-height: var(--typography-line-height-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  user-select: none;
+  transition: font-size 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              line-height 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bt-input-multiple-field__label--floating {
+  font-size: var(--typography-font-size-xs);
+  line-height: var(--typography-line-height-xs);
+}
+
+.bt-input-multiple-field--focused .bt-input-multiple-field__label--floating {
+  color: var(--color-brand-primary);
+}
+
+.bt-input-multiple-field--error .bt-input-multiple-field__label    { color: var(--text-error); }
+.bt-input-multiple-field--disabled .bt-input-multiple-field__label { color: var(--text-disabled); }
+
+.bt-input-multiple-field__required {
+  color: var(--text-error);
+  margin-inline-start: var(--space-2xs);
+}
+
+/* ─── Body: chips + inline cursor ─────────────────────────────────────── */
+/* Visible only when label is floating (or no label).
+   height = 20px to match BTTag (py-2 + line-height-xs-16px + py-2 = 20px). */
+.bt-input-multiple-field__body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+/* ─── Tag overflow: ellipsis when label is too long ────────────────────── */
+/* Tags sit inside a flex row that is already width-constrained.
+   max-width: 100% caps the tag at the body width; min-width: 0 allows
+   the flex item to shrink below its intrinsic content size.
+   The label span gets the actual truncation — the close button is
+   flex-shrink: 0 so it is always fully visible. */
+.bt-input-multiple-field__body .bt-tag {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.bt-input-multiple-field__body .bt-tag .bt-tag__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* Scroll variant: single fixed-height horizontal row */
+.bt-input-multiple-field--scroll .bt-input-multiple-field__body {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 20px;
+  scrollbar-width: none;
+  /* Trailing padding so last tag has breathing room when scrolled to end */
+  padding-inline-end: var(--space-sm);
+}
+
+.bt-input-multiple-field--scroll .bt-input-multiple-field__body::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Inline cursor input ───────────────────────────────────────────────── */
+.bt-input-multiple-field__cursor {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  padding: 0;
+  min-width: 60px;
+  flex: 1;
+  height: 20px;
+  line-height: var(--typography-line-height-sm);
+}
+
+.bt-input-multiple-field__cursor::placeholder {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.bt-input-multiple-field--disabled .bt-input-multiple-field__cursor {
+  cursor: not-allowed;
+}
+
+/* ─── Right actions ─────────────────────────────────────────────────────── */
+/* Holds clear-all (cancel) + chevron icons.
+   align-self: flex-start on wrap+expanded so icons sit at label height. */
+.bt-input-multiple-field__actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+/* Actions always inherit container's align-items:center — no per-state override */
+
+/* ─── Clear-all button ──────────────────────────────────────────────────── */
+.bt-input-multiple-field__clear-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  color: var(--icon-primary);
+  flex-shrink: 0;
+  transition: color 150ms ease;
+}
+
+.bt-input-multiple-field__clear-all:hover {
+  color: var(--icon-primary);
+}
+
+.bt-input-multiple-field__clear-all svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  display: block;
+}
+
+/* ─── Chevron button ────────────────────────────────────────────────────── */
+/* No rotation animation — uses separate ↓ / ↑ SVG paths (matching Figma) */
+.bt-input-multiple-field__chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.bt-input-multiple-field__chevron:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.bt-input-multiple-field__chevron svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  display: block;
+}
+
+/* ─── Helper / error text ───────────────────────────────────────────────── */
+.bt-input-multiple-field__helper {
+  margin-top: 4px;
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+}
+
+.bt-input-multiple-field__helper-text       { color: var(--text-secondary); }
+.bt-input-multiple-field__helper-text--error { color: var(--text-error); }
+
+/* ─── Overlay dropdown ───────────────────────────────────────────────────── */
+/* BTDropdownList has a standalone width:210px by default (Figma spec for
+   standalone use). When rendered inside the MultipleField overlay the dropdown
+   must stretch to match the field width, which is set as an inline style on
+   .bt-input-mf-overlay via syncOverlayPosition(). */
+.bt-input-mf-overlay .bt-dropdown-list {
+  width: 100%;
+}

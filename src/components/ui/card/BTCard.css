@@ -1,0 +1,151 @@
+/* BTCard — organism card with three visual variants.
+   Figma node 93:157 (no D/M prefix — all platforms).
+   Shared between @btech/ui-vue and @btech/ui-react — keep these files identical. */
+
+/* ── Container ──────────────────────────────────────────────────────────── */
+.bt-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  font-family: var(--typography-font-family-sans);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* ── Variant: default ───────────────────────────────────────────────────── */
+.bt-card--default {
+  border-radius: var(--radius-lg);   /* 16px */
+  padding: var(--space-lg);
+  gap: var(--space-lg);
+}
+
+/* ── Variant: small ─────────────────────────────────────────────────────── */
+.bt-card--small {
+  border-radius: var(--radius-md);   /* 8px */
+  padding: var(--space-md);
+  gap: var(--space-md);
+}
+
+/* ── Variant: image ─────────────────────────────────────────────────────── */
+.bt-card--image {
+  border-radius: var(--radius-lg);   /* 16px */
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ── Image element ─────────────────────────────────────────────────────── */
+.bt-card__image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ── Image slot wrapper (custom widget replaces the <img>) ─────────────── */
+.bt-card__image-slot {
+  width: 100%;
+  height: 180px;
+  flex-shrink: 0;
+  overflow: hidden;   /* belt-and-suspenders; parent already clips */
+}
+
+/* ── Content wrapper below the image (padding + gap) ───────────────────── */
+.bt-card__image-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+}
+
+/* ── Header row: [header-block  |  header-aside] ───────────────────────── */
+.bt-card__header-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  width: 100%;
+}
+
+/* ── Header block: [title-row  /  description] ──────────────────────────── */
+.bt-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ── Title row: [title text  |  title-action] ───────────────────────────── */
+.bt-card__title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+/* ── Title ──────────────────────────────────────────────────────────────── */
+.bt-card__title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--typography-font-size-md);        /* fontSize.md */
+  font-weight: 700;       /* subheading/h6 — bold */
+  line-height: var(--typography-line-height-sm);      /* lineHeight.sm */
+  letter-spacing: 0;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.bt-card--small .bt-card__title {
+  font-size: var(--typography-font-size-sm);        /* fontSize.sm */
+  font-weight: 500;       /* body/regular — medium */
+  line-height: var(--typography-line-height-xs);      /* lineHeight.xs */
+}
+
+/* ── Description ────────────────────────────────────────────────────────── */
+.bt-card__description {
+  font-size: var(--typography-font-size-sm);        /* fontSize.sm */
+  font-weight: 500;       /* body/regular */
+  line-height: var(--typography-line-height-xs);      /* lineHeight.xs */
+  letter-spacing: 0;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bt-card--small .bt-card__description {
+  font-size: var(--typography-font-size-xs);        /* fontSize.xs */
+}
+
+/* ── Slot containers ────────────────────────────────────────────────────── */
+.bt-card__title-action {
+  flex-shrink: 0;
+  width: 20px;
+  align-self: stretch;
+}
+
+.bt-card__header-aside {
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+/* ── Body ───────────────────────────────────────────────────────────────── */
+.bt-card__body {
+  width: 100%;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.bt-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  width: 100%;
+  overflow: hidden;
+}
+
+[dir="rtl"] .bt-card__footer {
+  justify-content: left;
+}

@@ -1,0 +1,836 @@
+/* BTInputRichEditor — Figma node 665-2254 */
+
+/* ── Wrapper ──────────────────────────────────────────────────────────────── */
+.bt-input-rich-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+/* ── Content box ──────────────────────────────────────────────────────────── */
+.bt-input-rich-editor__box {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* Figma Default state: border.tertiary (#c1c6cd = neutral-300) */
+  border: 1px solid var(--border-tertiary);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  /* No fixed max-height — box grows naturally to fit editor + attachment cards.
+     Removed overflow:hidden so the editor is never clipped. */
+  padding: 8px;
+  gap: var(--space-xs);
+  transition: border-color 0.15s;
+  cursor: text;
+}
+
+/* State: focused/active */
+.bt-input-rich-editor--active .bt-input-rich-editor__box {
+  border-color: var(--color-brand-primary);
+}
+
+/* State: error */
+.bt-input-rich-editor--error .bt-input-rich-editor__box {
+  border-color: var(--color-ext-error);
+}
+
+/* State: disabled */
+.bt-input-rich-editor--disabled .bt-input-rich-editor__box {
+  background: var(--bg-subtle);
+  border-color: var(--border-disabled);
+  cursor: not-allowed;
+}
+
+/* ── Label ────────────────────────────────────────────────────────────────── */
+.bt-input-rich-editor__label {
+  font-size: var(--typography-font-size-sm);  /* 14px — empty/default state */
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-secondary);
+  transition: font-size 0.15s, color 0.15s;
+  pointer-events: none;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+/* Label floats when filled or active */
+.bt-input-rich-editor--filled .bt-input-rich-editor__label,
+.bt-input-rich-editor--active .bt-input-rich-editor__label {
+  font-size: var(--typography-font-size-xs);  /* 12px */
+}
+
+/* Label color: active/focused → brand primary (matches BTInputTextArea) */
+.bt-input-rich-editor--active .bt-input-rich-editor__label {
+  color: var(--color-brand-primary);
+}
+
+/* Label color: error state */
+.bt-input-rich-editor--error .bt-input-rich-editor__label {
+  color: var(--text-error);
+}
+
+/* Label color: disabled */
+.bt-input-rich-editor--disabled .bt-input-rich-editor__label {
+  color: var(--text-primary);
+}
+
+.bt-input-rich-editor__required {
+  color: var(--text-error);
+}
+
+/* ── Header row (label + clear button) ───────────────────────────────────── */
+.bt-input-rich-editor__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+/* ── Clear button ─────────────────────────────────────────────────────────── */
+.bt-input-rich-editor__clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--icon-primary);
+  transition: opacity 0.1s;
+}
+
+.bt-input-rich-editor__clear:hover {
+  opacity: 0.7;
+}
+
+.bt-input-rich-editor__clear img,
+.bt-input-rich-editor__clear .bt-input-rich-editor__masked-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* Masked icon — SVG loaded as mask, color from currentColor */
+.bt-input-rich-editor__masked-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.bt-input-rich-editor__masked-icon--24 {
+  width: 24px;
+  height: 24px;
+}
+
+/* ── Editor area (Quill mount point) ─────────────────────────────────────── */
+/*
+ * When Quill initializes, it turns this div into .ql-container and creates
+ * .ql-editor inside it. We reset all Quill defaults here.
+ *
+ * No flex:1 — the box has no fixed height to flex against (it grows with content).
+ * The editor uses a concrete min-height instead so it is always visible.
+ */
+.bt-input-rich-editor__editor {
+  min-height: 56px;   /* always tappable even when empty */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Quill makes the mount div the .ql-container — reset its injected styles */
+.bt-input-rich-editor__editor.ql-container {
+  border: none !important;
+  box-shadow: none !important;
+  font-family: var(--typography-font-family-sans) !important;
+  font-size: var(--typography-font-size-sm) !important;
+  height: auto !important;
+}
+
+/* Override Quill editor inner element */
+.bt-input-rich-editor__editor .ql-editor {
+  padding: 0 !important;
+  outline: none !important;       /* ← KEY FIX: removes browser blue focus ring */
+  border: none !important;
+  box-shadow: none !important;
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-primary);
+  min-height: 32px;
+  max-height: 120px;   /* cap the text area height; box itself grows for attachment cards */
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Placeholder text */
+.bt-input-rich-editor__editor .ql-editor.ql-blank::before {
+  font-style: normal;
+  color: var(--text-secondary);
+  pointer-events: none;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+}
+
+/* Paragraph margin reset */
+.bt-input-rich-editor__editor .ql-editor p {
+  margin: 0;
+}
+
+/* Static content in disabled+filled state (Quill not initialized) */
+.bt-input-rich-editor__editor--static {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-primary);
+  overflow-y: auto;
+}
+
+.bt-input-rich-editor__editor--static p {
+  margin: 0;
+}
+
+/* ── Toolbar ──────────────────────────────────────────────────────────────── */
+/* Figma toolbar: bg-primary, border-primary, 36px height, 5px radius, 8px 12px padding */
+.bt-input-rich-editor__toolbar {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  padding: 8px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 5px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* Scrollable icon area — takes remaining width, hides scrollbar */
+.bt-input-rich-editor__toolbar-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.bt-input-rich-editor__toolbar-main::-webkit-scrollbar {
+  display: none;
+}
+
+/* Pinned end group — delete always at far right */
+.bt-input-rich-editor__toolbar-end {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+/* Toolbar button — 16×16, no padding: SVG viewBox already includes Figma frame padding */
+.bt-input-rich-editor__tool {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 3px;
+  color: var(--icon-primary);
+  transition: background 0.1s;
+}
+
+.bt-input-rich-editor__tool:hover {
+  background: var(--bg-subtle);
+}
+
+.bt-input-rich-editor__tool--active {
+  background: var(--bg-secondary);
+}
+
+.bt-input-rich-editor__tool img,
+.bt-input-rich-editor__tool .bt-input-rich-editor__masked-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  /* object-fit: contain as safety net — prevents any layout-driven stretching */
+  object-fit: contain;
+}
+
+/* Toolbar separator — vertical 1px line, full toolbar height */
+.bt-input-rich-editor__separator {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border-tertiary);
+  flex-shrink: 0;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.bt-input-rich-editor__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* Error text (left side in error state) */
+.bt-input-rich-editor__footer-error {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-error);
+}
+
+/* Char count (right side always) */
+.bt-input-rich-editor__footer-count {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-secondary);
+  text-align: end;
+  white-space: nowrap;
+}
+
+.bt-input-rich-editor__footer-count--error {
+  color: var(--text-error);
+}
+
+/* ── Helper text (non-error) ──────────────────────────────────────────────── */
+.bt-input-rich-editor__helper {
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-secondary);
+}
+
+/* ── Attachment cards ─────────────────────────────────────────────────────── */
+.bt-input-rich-editor__attachments {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+  /* Prevent click propagating to __box focus handler */
+  cursor: default;
+}
+
+.bt-input-rich-editor__attachment {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-tertiary);
+  border-radius: var(--radius-md);
+  min-width: 0;
+}
+
+/* File icon wrapper — fixed size, icon color */
+.bt-input-rich-editor__attachment-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon-primary);
+}
+
+.bt-input-rich-editor__attachment-icon img,
+.bt-input-rich-editor__attachment-icon .bt-input-rich-editor__masked-icon {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+/* Two-line info block */
+.bt-input-rich-editor__attachment-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.bt-input-rich-editor__attachment-name {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bt-input-rich-editor__attachment-meta {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-xs);
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+/* Remove (×) button */
+.bt-input-rich-editor__attachment-remove {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--icon-primary);
+  border-radius: var(--radius-xs);
+  transition: background 0.1s, opacity 0.1s;
+}
+
+.bt-input-rich-editor__attachment-remove:hover {
+  background: var(--bg-secondary);
+  opacity: 0.7;
+}
+
+/* ── Toolbar wrapper — positioned so pickers can float ──────────────────── */
+.bt-input-rich-editor__toolbar-wrap {
+  position: relative;
+}
+
+
+/* ── Emoji picker ─────────────────────────────────────────────────────────── */
+.bt-input-rich-editor__emoji-picker {
+  position: absolute;
+  top: calc(100% + 4px);
+  /* left is set inline via JS (aligned under the emoji button) */
+  z-index: 100;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+}
+
+/* Search row */
+.bt-input-rich-editor__emoji-search-wrap {
+  position: relative;
+  padding: 10px 10px 6px;
+  flex-shrink: 0;
+}
+
+.bt-input-rich-editor__emoji-search {
+  width: 100%;
+  box-sizing: border-box;
+  height: 36px;
+  padding: 0 32px 0 10px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: var(--radius-sm);
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 400;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.bt-input-rich-editor__emoji-search:focus {
+  border-color: var(--color-brand-primary);
+}
+
+.bt-input-rich-editor__emoji-search::placeholder {
+  color: var(--text-secondary);
+}
+
+.bt-input-rich-editor__emoji-search-icon {
+  position: absolute;
+  inset-inline-end: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--icon-primary);
+  pointer-events: none;
+}
+
+/* Category tab strip */
+.bt-input-rich-editor__emoji-cats {
+  display: flex;
+  align-items: center;
+  padding: 0 6px 4px;
+  gap: var(--space-2xs);
+  border-bottom: 1px solid var(--border-tertiary);
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.bt-input-rich-editor__emoji-cats::-webkit-scrollbar { display: none; }
+
+.bt-input-rich-editor__emoji-cat {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  font-size: var(--typography-font-size-lg);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+  transition: background 0.1s;
+}
+
+.bt-input-rich-editor__emoji-cat:hover {
+  background: var(--bg-subtle);
+}
+
+/* Active indicator — bottom underline */
+.bt-input-rich-editor__emoji-cat--active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  inset-inline-start: var(--space-xs);
+  inset-inline-end: var(--space-xs);
+  height: 2px;
+  border-radius: var(--radius-2xs);
+  background: var(--color-brand-primary);
+}
+
+/* Scrollable emoji content */
+.bt-input-rich-editor__emoji-scroll {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 280px;
+  padding: 8px 6px 6px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-tertiary) transparent;
+}
+
+/* Section wrapper */
+.bt-input-rich-editor__emoji-section {
+  margin-bottom: 6px;
+}
+
+/* Category label (e.g. "Smileys & Emotion") */
+.bt-input-rich-editor__emoji-cat-label {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-xs);
+  font-weight: 700;
+  color: var(--text-secondary);
+  padding: 2px 2px 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Emoji grid */
+.bt-input-rich-editor__emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0;
+}
+
+/* Individual emoji button */
+.bt-input-rich-editor__emoji-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 22px;
+  line-height: 1;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.1s;
+}
+
+.bt-input-rich-editor__emoji-btn:hover {
+  background: var(--bg-subtle);
+}
+
+/* No search results message */
+.bt-input-rich-editor__emoji-empty {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-sm);
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 24px 0;
+  margin: 0;
+}
+
+/* ── Link popover ─────────────────────────────────────────────────────────── */
+.bt-input-rich-editor__link-popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  /* left is set inline via JS (aligned under the link button) */
+  width: 370px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: 16px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* open_in_new icon inside the BTInput suffix slot */
+.bt-input-rich-editor__link-suffix-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--icon-primary);
+}
+
+/* Action buttons row — BTButton handles its own styles */
+.bt-input-rich-editor__link-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+/* ── Quill 2.x list & alignment (extracted from quill.core.css v2.0.3) ─── */
+/*
+ * theme:false skips loading quill.core.css, so list markers and alignment
+ * classes never render without these rules. Scoped to our editor wrapper.
+ */
+
+/* Counter reset on editor root */
+.bt-input-rich-editor__editor .ql-editor {
+  counter-reset: list-0 list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+}
+
+/* Reset list counters between paragraphs/headings */
+@supports (counter-set: none) {
+  .bt-input-rich-editor__editor .ql-editor p,
+  .bt-input-rich-editor__editor .ql-editor h1,
+  .bt-input-rich-editor__editor .ql-editor h2,
+  .bt-input-rich-editor__editor .ql-editor h3 {
+    counter-set: list-0 list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+  }
+}
+@supports not (counter-set: none) {
+  .bt-input-rich-editor__editor .ql-editor p,
+  .bt-input-rich-editor__editor .ql-editor h1,
+  .bt-input-rich-editor__editor .ql-editor h2,
+  .bt-input-rich-editor__editor .ql-editor h3 {
+    counter-reset: list-0 list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+  }
+}
+
+/* List item base */
+.bt-input-rich-editor__editor .ql-editor li {
+  list-style-type: none;
+  padding-inline-start: 1.5em;
+  position: relative;
+}
+
+/* Quill 2.x places the marker in a .ql-ui span (position:absolute) */
+.bt-input-rich-editor__editor .ql-editor .ql-ui {
+  position: absolute;
+}
+
+.bt-input-rich-editor__editor .ql-editor li > .ql-ui::before {
+  display: inline-block;
+  margin-inline-start: -1.5em;
+  margin-inline-end: 0.3em;
+  text-align: end;
+  white-space: nowrap;
+  width: 1.2em;
+}
+
+/* Bullet */
+.bt-input-rich-editor__editor .ql-editor li[data-list=bullet] > .ql-ui::before {
+  content: '\2022';
+}
+
+/* Reset nested counters per list item */
+@supports (counter-set: none) {
+  .bt-input-rich-editor__editor .ql-editor li[data-list] {
+    counter-set: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+  }
+}
+@supports not (counter-set: none) {
+  .bt-input-rich-editor__editor .ql-editor li[data-list] {
+    counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+  }
+}
+
+/* Ordered list — level 0 */
+.bt-input-rich-editor__editor .ql-editor li[data-list=ordered] {
+  counter-increment: list-0;
+}
+.bt-input-rich-editor__editor .ql-editor li[data-list=ordered] > .ql-ui::before {
+  content: counter(list-0, decimal) '. ';
+}
+
+/* Ordered list — level 1 (indent-1) */
+.bt-input-rich-editor__editor .ql-editor li[data-list=ordered].ql-indent-1 {
+  counter-increment: list-1;
+}
+.bt-input-rich-editor__editor .ql-editor li[data-list=ordered].ql-indent-1 > .ql-ui::before {
+  content: counter(list-1, lower-alpha) '. ';
+}
+@supports (counter-set: none) {
+  .bt-input-rich-editor__editor .ql-editor li[data-list].ql-indent-1 {
+    counter-set: list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+  }
+}
+@supports not (counter-set: none) {
+  .bt-input-rich-editor__editor .ql-editor li[data-list].ql-indent-1 {
+    counter-reset: list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+  }
+}
+
+/* Ordered list — level 2 (indent-2) */
+.bt-input-rich-editor__editor .ql-editor li[data-list=ordered].ql-indent-2 {
+  counter-increment: list-2;
+}
+.bt-input-rich-editor__editor .ql-editor li[data-list=ordered].ql-indent-2 > .ql-ui::before {
+  content: counter(list-2, lower-roman) '. ';
+}
+@supports (counter-set: none) {
+  .bt-input-rich-editor__editor .ql-editor li[data-list].ql-indent-2 {
+    counter-set: list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+  }
+}
+@supports not (counter-set: none) {
+  .bt-input-rich-editor__editor .ql-editor li[data-list].ql-indent-2 {
+    counter-reset: list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+  }
+}
+
+/* Indent padding (levels 1-3) */
+.bt-input-rich-editor__editor .ql-editor .ql-indent-1:not(.ql-direction-rtl)   { padding-left: 3em; }
+.bt-input-rich-editor__editor .ql-editor li.ql-indent-1:not(.ql-direction-rtl) { padding-left: 4.5em; }
+.bt-input-rich-editor__editor .ql-editor .ql-indent-2:not(.ql-direction-rtl)   { padding-left: 6em; }
+.bt-input-rich-editor__editor .ql-editor li.ql-indent-2:not(.ql-direction-rtl) { padding-left: 7.5em; }
+.bt-input-rich-editor__editor .ql-editor .ql-indent-3:not(.ql-direction-rtl)   { padding-left: 9em; }
+.bt-input-rich-editor__editor .ql-editor li.ql-indent-3:not(.ql-direction-rtl) { padding-left: 10.5em; }
+
+/* Alignment classes */
+.bt-input-rich-editor__editor .ql-editor .ql-align-center  { text-align: center; }
+.bt-input-rich-editor__editor .ql-editor .ql-align-right   { text-align: right; }
+.bt-input-rich-editor__editor .ql-editor .ql-align-justify { text-align: justify; }
+
+/* Images inserted via toolbar */
+.bt-input-rich-editor__editor .ql-editor img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Links */
+.bt-input-rich-editor__editor .ql-editor a {
+  color: var(--color-brand-primary);
+  text-decoration: underline;
+}
+
+/* ── Color picker popover ─────────────────────────────────────────────────── */
+
+/* Popover panel — anchored below toolbar, positioned via inline left: */
+.bt-input-rich-editor__color-picker {
+  position: absolute;
+  top: calc(100% + 4px);
+  z-index: 200;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 12px;
+  width: 220px;
+}
+
+/* Section label ("Warna Teks" / "Warna Highlight") */
+.bt-input-rich-editor__color-picker-label {
+  font-size: var(--typography-font-size-2xs);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 8px;
+}
+
+/* "Hapus warna" button */
+.bt-input-rich-editor__color-none {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xs);
+  background: none;
+  cursor: pointer;
+  font-size: var(--typography-font-size-xs);
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  transition: background 0.1s;
+}
+.bt-input-rich-editor__color-none:hover {
+  background: var(--bg-subtle);
+}
+.bt-input-rich-editor__color-none svg {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+/* 8-column swatch grid */
+.bt-input-rich-editor__color-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+}
+
+/* Individual color swatch */
+.bt-input-rich-editor__color-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.bt-input-rich-editor__color-swatch:hover {
+  transform: scale(1.15);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Active swatch — shows ring to indicate currently applied color */
+.bt-input-rich-editor__color-swatch--active {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 1px;
+}
