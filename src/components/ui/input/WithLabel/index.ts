@@ -1,2 +1,2 @@
-export { BTInputWithLabel } from '@/components/ui/input/WithLabel/BTInputWithLabel';
-export type { BTInputWithLabelProps, BTInputWithLabelHandle } from '@/components/ui/input/WithLabel/BTInputWithLabel.types';
+export { default as BTInputWithLabel } from '@/components/ui/input/WithLabel/BTInputWithLabel.vue';
+export type { BTInputWithLabelProps } from '@/components/ui/input/WithLabel/BTInputWithLabel.types';

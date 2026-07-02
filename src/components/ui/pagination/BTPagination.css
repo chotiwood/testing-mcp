@@ -1,0 +1,172 @@
+/* BTPagination — Figma node 749-2846 */
+
+/* ── Root ──────────────────────────────────────────────────────────────────── */
+
+.bt-pagination {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-family: inherit;
+}
+
+.bt-pagination--number {
+  gap: var(--space-lg);
+}
+
+.bt-pagination--display,
+.bt-pagination--step {
+  justify-content: space-between;
+}
+
+/* ── Nav button group ───────────────────────────────────────────────────────── */
+
+.bt-pagination__nav {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* ── Pages center section ───────────────────────────────────────────────────── */
+
+.bt-pagination__pages {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 1;
+  justify-content: center;
+}
+
+/* ── Individual page pill ───────────────────────────────────────────────────── */
+
+.bt-pagination__page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-primary);
+  cursor: pointer;
+  background: transparent;
+  transition: background 100ms ease, border-color 100ms ease;
+  flex-shrink: 0;
+}
+
+.bt-pagination__page:hover:not(.bt-pagination__page--active):not(.bt-pagination__page--ellipsis) {
+  background: var(--bg-subtle);
+}
+
+.bt-pagination__page--active {
+  background: var(--bg-subtle);
+  border-color: var(--color-brand-primary);
+}
+
+.bt-pagination__page--ellipsis {
+  border: none;
+  pointer-events: none;
+  cursor: default;
+  color: var(--text-secondary);
+}
+
+/* ── Display variant ────────────────────────────────────────────────────────── */
+
+.bt-pagination__display-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.bt-pagination__rows-label {
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Rows-per-page trigger button (wraps the BTDropdown custom trigger) */
+.bt-pagination__rows-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  padding: 6px var(--space-sm);
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-primary);
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 100ms ease, background 100ms ease;
+  white-space: nowrap;
+}
+
+.bt-pagination__rows-trigger:hover {
+  background: var(--bg-subtle);
+}
+
+.bt-pagination__rows-trigger--open,
+.bt-pagination__rows-trigger:focus-visible {
+  outline: none;
+  border-color: var(--color-brand-primary);
+}
+
+/* Chevron rotates when open.
+   transform-box: fill-box + transform-origin: center ensures the SVG rotates
+   around its own visual centre, not the SVG coordinate-system origin (0 0). */
+.bt-pagination__rows-chevron-icon {
+  display: block;
+  flex-shrink: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 150ms ease;
+}
+
+.bt-pagination__rows-chevron-icon--open {
+  transform: rotate(180deg);
+}
+
+/* ── RTL ─────────────────────────────────────────────────────────────────────
+ * Auto-mirrors via host `dir="rtl"` — flex auto-reverses button order, labels
+ * stay tied to their semantic button (Previous = page-1, Next = page+1), so
+ * "Previous" sits on the visual right and "Next" on the visual left in RTL.
+ * The only thing CSS can't auto-flip is the chevron SVG glyph itself — mirror
+ * it via a scoped transform so chevrons always point the right way. */
+[dir="rtl"] .bt-pagination__icon svg {
+  transform: scaleX(-1);
+}
+
+/* ── Step variant ───────────────────────────────────────────────────────────── */
+
+.bt-pagination__step-label {
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Step nav: 16px gap between Prev and Next buttons */
+.bt-pagination__nav--step {
+  gap: var(--space-lg);
+}
+
+/* ── Icon wrapper ───────────────────────────────────────────────────────────── */
+
+.bt-pagination__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.bt-pagination__icon > svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}

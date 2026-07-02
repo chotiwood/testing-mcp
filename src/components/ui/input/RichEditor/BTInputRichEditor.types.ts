@@ -42,3 +42,43 @@ export interface BTInputRichEditorContent {
   attachments: File[];
 }
 
+export interface BTInputRichEditorProps {
+  /**
+   * Editor HTML content (v-model).
+   * Quill outputs well-formed HTML; consumers may sanitise on the server.
+   */
+  modelValue?: string;
+  /** Floating label shown above the editor content. */
+  label?: string;
+  /** Placeholder text shown when the editor is empty. */
+  placeholder?: string;
+  /** Shows a red `*` after the label. */
+  required?: boolean;
+  /** Disables the editor and hides the toolbar. */
+  disabled?: boolean;
+  /**
+   * External error message. Triggers error border on the content box and
+   * shows validation text below. Overrides internal validator error.
+   */
+  errorText?: string;
+  /** Helper / info text shown below the editor in the default state. */
+  helperText?: string;
+  /**
+   * Maximum character count (plain text, not HTML).
+   * Shown in the footer as `X/maxLength`. Defaults to 2000.
+   * @default 2000
+   */
+  maxLength?: number;
+  /**
+   * Toolbar layout variant.
+   * - `big`   — full toolbar with undo/redo, alignment, and delete.
+   * - `small` — compact toolbar without undo/redo, alignment or delete.
+   * @default 'big'
+   */
+  toolbar?: BTInputRichEditorToolbar;
+  /**
+   * Validation function called by `validate()`.
+   * Return an error string or null.
+   */
+  validator?: (value: string) => string | null;
+}

@@ -1,7 +1,4 @@
-export { BTTooltip } from '@/components/ui/tooltip/BTTooltip';
-export type {
-  BTTooltipReactProps,
-} from '@/components/ui/tooltip/BTTooltip';
+export { default as BTTooltip } from '@/components/ui/tooltip/BTTooltip.vue';
 export type {
   BTTooltipProps,
   BTTooltipPosition,

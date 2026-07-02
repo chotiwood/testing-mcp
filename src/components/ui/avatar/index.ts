@@ -1,6 +1,8 @@
-// Public barrel for the BTAvatar component.
-export { BTAvatar } from '@/components/ui/avatar/BTAvatar';
-export { deriveInitials } from '@/components/ui/avatar/BTAvatar.types';
+// Public barrel for the BTAvatar component (Vue 3 SFC).
+export { default as BTAvatar } from '@/components/ui/avatar/BTAvatar.vue';
+export {
+  deriveInitials,
+} from '@/components/ui/avatar/BTAvatar.types';
 export type {
   BTAvatarColor,
   BTAvatarItem,

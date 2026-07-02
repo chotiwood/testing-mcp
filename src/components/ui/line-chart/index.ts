@@ -1,3 +1,2 @@
-export { BTLineChart } from '@/components/ui/line-chart/BTLineChart';
-export type { BTLineChartProps } from '@/components/ui/line-chart/BTLineChart';
+export { default as BTLineChart } from '@/components/ui/line-chart/BTLineChart.vue';
 export type { BTLineSeries, BTLineSpot } from '@/components/ui/line-chart/BTLineChart.types';

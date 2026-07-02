@@ -7,13 +7,11 @@
  * panel never overflows the viewport edges.
  *
  * Usage:
- *   // After the panel is in the DOM (useEffect / callback after state update):
+ *   // After the panel is in the DOM (watch flush:'post' or nextTick):
  *   positionBelow(triggerEl, panelEl, { gap: 4, margin: 8 });
  *
- * Also exported: positionCentered — same algorithm but centres the panel
+ * Also exported: positionDropdown — same algorithm but centres the panel
  * horizontally over an anchor element (for header pill dropdowns).
- *
- * Mirror of packages/ui/vue/src/utils/positionFloating.ts — keep in sync.
  */
 
 export interface PositionOptions {
@@ -59,8 +57,8 @@ export function positionBelow(
   return goAbove ? 'above' : 'below';
 }
 
-export type PopoverSide  = 'top' | 'bottom' | 'left' | 'right';
-export type PopoverAlign = 'start' | 'center' | 'end';
+export type PopoverSide   = 'top' | 'bottom' | 'left' | 'right';
+export type PopoverAlign  = 'start' | 'center' | 'end';
 
 /**
  * Position a popover panel relative to a trigger with auto-flip on all axes.
@@ -102,8 +100,8 @@ export function positionPopover(
   else /* left */                     left = tRect.left  - pRect.width - sideOffset;
 
   // ── Cross axis (alignment) — flip start/end in RTL ──────────────────────────
-  const isRtl2 = getComputedStyle(trigger).direction === 'rtl';
-  const resolvedAlign = isRtl2
+  const isRtl = getComputedStyle(trigger).direction === 'rtl';
+  const resolvedAlign = isRtl
     ? (align === 'start' ? 'end' : align === 'end' ? 'start' : align)
     : align;
 

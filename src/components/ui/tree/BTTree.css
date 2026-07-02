@@ -1,0 +1,163 @@
+/* BTTree — Figma node 2481:7383 (light) · 4799:592 (dark levels) */
+/* All CSS vars verified against packages/tokens/platforms/web/bspace/dist/styles.css */
+
+/* ── Tree root ────────────────────────────────────────────────────────────── */
+
+.bt-tree {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Tree node wrapper (row + children) ──────────────────────────────────── */
+
+.bt-tree-node {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Row — height driven by padding only, no fixed min-height ────────────── */
+
+.bt-tree-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  box-sizing: border-box;
+  cursor: pointer;
+  user-select: none;
+  padding-top: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  padding-inline-end: var(--space-sm);
+  /* padding-inline-start is set via inline style (level-based) */
+}
+
+/* ── Level-based default backgrounds ─────────────────────────────────────── */
+
+.bt-tree-item--level-1 { background: var(--color-tree-lv1); }
+.bt-tree-item--level-2 { background: var(--color-tree-lv2); }
+.bt-tree-item--level-3 { background: var(--color-tree-lv3); }
+.bt-tree-item--level-4 { background: var(--color-tree-lv4); }
+.bt-tree-item--level-5 { background: var(--color-tree-lv5); }
+.bt-tree-item--level-6 { background: var(--color-tree-lv6); }
+.bt-tree-item--level-7 { background: var(--color-tree-lv7); }
+.bt-tree-item--level-8 { background: var(--color-tree-lv8); }
+
+/* ── State overrides ─────────────────────────────────────────────────────── */
+
+.bt-tree-item:hover:not(.bt-tree-item--disabled) {
+  background: var(--bg-secondary);
+}
+
+.bt-tree-item--selected {
+  background: var(--color-brand-primary-subtle);
+}
+
+.bt-tree-item--selected:hover:not(.bt-tree-item--disabled) {
+  background: var(--color-brand-primary-subtle);
+}
+
+.bt-tree-item--checked {
+  background: var(--color-brand-primary-subtle);
+}
+
+.bt-tree-item--checked:hover:not(.bt-tree-item--disabled) {
+  background: var(--color-brand-primary-subtle);
+}
+
+/* ── Disabled ─────────────────────────────────────────────────────────────── */
+
+.bt-tree-item--disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+/* ── Arrow (expand / collapse chevron) ───────────────────────────────────── */
+
+.bt-tree-item__arrow {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transform: rotate(-90deg);
+  transition: transform 0.15s ease;
+}
+
+.bt-tree-item__arrow--expanded {
+  transform: rotate(0deg);
+}
+
+.bt-tree-item__arrow:hover {
+  color: var(--text-primary);
+}
+
+.bt-tree-item__arrow-spacer {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+/* ── Checkbox ─────────────────────────────────────────────────────────────── */
+
+.bt-tree-item__checkbox {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Icon ─────────────────────────────────────────────────────────────────── */
+
+.bt-tree-item__icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+/* ── Label (text-only content) ────────────────────────────────────────────── */
+
+.bt-tree-item__label {
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: 1.14;
+  color: var(--text-primary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Body (custom content slot — replaces/supplements label area) ─────────── */
+
+.bt-tree-item__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Children collapse / expand animation ─────────────────────────────────── */
+
+.bt-tree-node__children {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bt-tree-node__children--open {
+  grid-template-rows: 1fr;
+}
+
+.bt-tree-node__children-inner {
+  min-height: 0;
+  overflow: hidden;
+}

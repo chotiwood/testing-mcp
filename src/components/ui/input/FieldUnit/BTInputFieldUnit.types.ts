@@ -1,7 +1,3 @@
-export interface BTInputFieldUnitHandle {
-  validate: () => boolean;
-}
-
 export interface BTInputFieldUnitOption {
   /** Display text shown in dropdown (e.g. "IDR", "https://") */
   label: string;
@@ -10,9 +6,6 @@ export interface BTInputFieldUnitOption {
 }
 
 export interface BTInputFieldUnitProps {
-  /** Field `name` — wires this input to BTForm context when wrapped. */
-  name?: string;
-
   // ── Left dropdown ────────────────────────────────────────────────────────
   /** Available unit options for the left selector panel. Required. */
   units: BTInputFieldUnitOption[];
@@ -22,50 +15,61 @@ export interface BTInputFieldUnitProps {
   initialUnit?: BTInputFieldUnitOption;
   /** Floating label shown above the selected unit text (e.g. "Currency"). */
   unitLabel?: string;
-  /** Show a search input at the top of the unit dropdown. @default false */
+  /**
+   * Show a search input at the top of the unit dropdown.
+   * @default false
+   */
   hasSearch?: boolean;
   /**
-   * Custom filter applied when hasSearch is true.
-   * Defaults to case-insensitive label.contains(query).
+   * Custom filter applied when hasSearch is true and the user types a query.
+   * Receives the full units list and the current query; returns the filtered
+   * subset to display. Defaults to case-insensitive label.contains(query).
    */
   itemsFilter?: (items: BTInputFieldUnitOption[], query: string) => BTInputFieldUnitOption[];
-  /** Called when a unit option is selected. */
-  onUnitChanged?: (unit: BTInputFieldUnitOption) => void;
 
   // ── Right text field ─────────────────────────────────────────────────────
   /** Floating label for the right text field (e.g. "Amount"). */
   label?: string;
-  /** Controlled value — always the sanitized raw value. */
-  value?: string;
-  /** Called when the text value changes. */
-  onChange?: (value: string) => void;
+  /** Controlled value (v-model). Always the sanitized raw value. */
+  modelValue?: string;
   /**
-   * Display transformer: receives the raw value and current unit; returns
-   * the string to show in the <input>. Does NOT affect the emitted value.
+   * Display transformer: receives the raw (sanitized) modelValue and the
+   * current unit; returns the string to show in the <input>. Does NOT
+   * affect the emitted value — modelValue is always raw.
    */
   formatter?: (value: string, unit: BTInputFieldUnitOption | null) => string;
   /**
-   * Input transformer: called on every input event; returns the raw value
-   * to emit. Use to strip formatting characters. Defaults to identity.
+   * Input transformer: called on every input event with the current
+   * target.value; returns the raw value to emit. Use to strip formatting
+   * characters typed by the user. Defaults to identity (emit as-is).
    */
   sanitizer?: (value: string, unit: BTInputFieldUnitOption | null) => string;
-  /** HTML input keyboard hint. @default 'text' */
+  /**
+   * HTML input type for the right field.
+   * @default 'text'
+   */
   keyboardType?: 'text' | 'number' | 'decimal' | 'tel' | 'url';
-  /** Placeholder shown in the right field when empty. */
+  /** Placeholder shown in the right field when empty and unfocused. */
   hintText?: string;
   /**
-   * Show a × clear button when the right field has content and is focused.
+   * Show a × clear button that slides in when the right field has content
+   * and is focused. Clicking it emits update:modelValue with ''.
    * @default true
    */
   clearable?: boolean;
 
+  // ── BTForm wiring ────────────────────────────────────────────────────────
+  /** Field name — when set inside a `<BTForm>`, auto-wires value/error. */
+  name?: string;
+
   // ── Shared ───────────────────────────────────────────────────────────────
   /**
    * Validation function called by the exposed `validate()` method.
-   * Return a non-null string for an error, or null to clear.
+   * Receives the current raw modelValue and the selected unit.
+   * Return a non-null string to show as an error, or null to clear it.
    */
   validator?: (value: string, unit: BTInputFieldUnitOption | null) => string | null;
-  /** External error message (takes precedence over the internal validator). */
+  /** External error message (takes precedence over the internal validator result). */
   errorText?: string;
   /** Helper text shown below when no error. */
   helperText?: string;
@@ -73,5 +77,4 @@ export interface BTInputFieldUnitProps {
   disabled?: boolean;
   /** Appends " *" (red) to both labels. @default false */
   required?: boolean;
-  className?: string;
 }

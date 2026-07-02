@@ -1,5 +1,5 @@
-export { BTToast } from '@/components/ui/toast/BTToast';
-export { BTToaster } from '@/components/ui/toast/BTToaster';
+export { default as BTToast } from '@/components/ui/toast/BTToast.vue';
+export { default as BTToaster } from '@/components/ui/toast/BTToaster.vue';
 export { toast, useToast } from '@/components/ui/toast/useToast';
 export type {
   BTToastItem,

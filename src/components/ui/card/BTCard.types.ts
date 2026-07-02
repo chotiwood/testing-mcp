@@ -22,19 +22,20 @@ export interface BTCardProps {
   /**
    * Show the cancel + submit footer.
    * Defaults to `true` for `default` and `image`, `false` for `small`.
+   * Pass `null` (or omit) to use the variant default.
    */
-  hasFooter?: boolean;
+  hasFooter?: boolean | null;
   /** Label for the cancel button. @default 'Cancel' */
   cancelLabel?: string;
   /** Label for the submit button. @default 'Submit' */
   submitLabel?: string;
 }
-// Image for variant="image" is passed via the `image` ReactNode prop on BTCardReactProps:
+// Image for variant="image" is passed via the `#image` named slot:
 //
-// ```tsx
-// <BTCard
-//   variant="image"
-//   title="Title"
-//   image={<img src="/photo.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Photo" />}
-// />
+// ```vue
+// <BTCard variant="image" title="Title">
+//   <template #image>
+//     <img src="/photo.jpg" style="width:100%;height:100%;object-fit:cover" alt="Photo" />
+//   </template>
+// </BTCard>
 // ```

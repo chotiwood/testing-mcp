@@ -1,26 +1,24 @@
-import type { HTMLAttributes } from 'react';
-
 /**
  * Props for BTLoading.
  *
  * @example
  * <BTLoading />
  * <BTLoading type="pulse" />
- * <BTLoading type="skeleton" width={200} />
- * <BTLoading type="progressbar" value={0.6} color="#e53e3e" />
- * <BTLoading type="logo" size={64} />
+ * <BTLoading type="skeleton" :width="200" />
+ * <BTLoading type="progressbar" :value="0.6" color="#e53e3e" />
+ * <BTLoading type="logo" :size="64" />
  */
 export type BTLoadingType = 'spinner' | 'pulse' | 'skeleton' | 'progressbar' | 'logo';
 
-export interface BTLoadingProps extends HTMLAttributes<HTMLDivElement> {
+export interface BTLoadingProps {
   /**
    * Which indicator to render.
    * @default 'spinner'
    */
   type?: BTLoadingType;
   /**
-   * CSS color string applied to progressbar bar + track only.
-   * Has no effect on spinner, pulse, skeleton, or logo.
+   * CSS color string applied to progressbar bar + track.
+   * Has no effect on skeleton or logo.
    * @default 'var(--color-brand-primary)'
    */
   color?: string;

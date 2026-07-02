@@ -1,13 +1,13 @@
-export { BTInput } from '@/components/ui/input/BTInput';
+export { default as BTInput } from '@/components/ui/input/BTInput.vue';
 export type { BTInputProps, BTInputType } from '@/components/ui/input/BTInput.types';
 export * from '@/components/ui/input/Date/index';
 export * from '@/components/ui/input/Dropdown/index';
 export * from '@/components/ui/input/FieldUnit/index';
+export * from '@/components/ui/input/MultipleField/index';
 export * from '@/components/ui/input/MultiOptions/index';
+export * from '@/components/ui/input/RichEditor/index';
 export * from '@/components/ui/input/Search/index';
 export * from '@/components/ui/input/SingleOptions/index';
 export * from '@/components/ui/input/TextArea/index';
-export * from '@/components/ui/input/RichEditor/index';
 export * from '@/components/ui/input/Time/index';
-export * from '@/components/ui/input/MultipleField/index';
 export * from '@/components/ui/input/WithLabel/index';

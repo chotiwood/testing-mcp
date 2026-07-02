@@ -15,10 +15,8 @@ export interface BTInputSingleOptionsItem<T = string> {
 }
 
 export interface BTInputSingleOptionsProps<T = string> {
-  /** Currently selected value. */
-  value?: T | null;
-  /** Called when the user selects a new option. */
-  onChange?: (value: T | null) => void;
+  /** Currently selected value — bind with v-model. */
+  modelValue?: T | null;
   /** Group label shown above the radio list. */
   label?: string;
   /** Shows a red `*` after the label when true. */
@@ -38,15 +36,8 @@ export interface BTInputSingleOptionsProps<T = string> {
   /** Native `name` attribute shared by all radio inputs for form grouping. */
   name?: string;
   /**
-   * Validation function called by `validate()` (via ref handle).
+   * Validation function called by `validate()` (exposed via defineExpose).
    * Return an error string or null.
    */
   validator?: (value: T | null) => string | null;
-  /** Additional CSS class names. */
-  className?: string;
-}
-
-export interface BTInputSingleOptionsHandle {
-  /** Runs the validator and shows the error message. Returns true when valid. */
-  validate(): boolean;
 }

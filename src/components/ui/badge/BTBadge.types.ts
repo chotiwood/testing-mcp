@@ -1,27 +1,18 @@
 /**
- * Props for {@link BTBadge}.
+ * Props for BTBadge.
  *
  * @example
- * ```tsx
  * <BTBadge label="Approved" variant="success" />
- * <BTBadge label="Draft" variant="draft" reverseColors />
- * <BTBadge label="Waiting" variant="waiting" leftIcon={<ClockIcon />} />
- * ```
+ * <BTBadge label="Draft" variant="draft" :reverseColors="true" />
  */
 export interface BTBadgeProps {
   /** Text displayed inside the badge. @default 'Badge' */
-  label?: string;
+  label?: string
   /**
-   * Color palette variant.
-   * @default 'success'
+   * Color palette variant. @default 'success'
+   * success | waiting | neutral | draft | reject | custom
    */
-  variant?: 'success' | 'waiting' | 'neutral' | 'draft' | 'reject' | 'custom';
-  /** When `true`: solid background + white text. @default false */
-  reverseColors?: boolean;
-  /** Optional 16×16 node rendered to the left of the label. */
-  leftIcon?: React.ReactNode;
-  /** Optional 16×16 node rendered to the right of the label. */
-  rightIcon?: React.ReactNode;
-  /** Additional CSS class names. */
-  className?: string;
+  variant?: 'success' | 'waiting' | 'neutral' | 'draft' | 'reject' | 'custom'
+  /** When true: solid background + white text. @default false */
+  reverseColors?: boolean
 }

@@ -1,0 +1,66 @@
+/* BTStepNumber — Figma node 3007-2442
+ *
+ * Shared by Vue (imported here) and React (same file in React package).
+ * All var() names verified against packages/tokens/platforms/web/bspace/dist/styles.css.
+ * No hex fallback per CLAUDE.md §6.
+ */
+
+.bt-step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: var(--space-sm);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text-primary);
+  background: transparent;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 100ms ease, border-color 100ms ease;
+  flex-shrink: 0;
+}
+
+.bt-step-number:hover:not(.bt-step-number--active):not(.bt-step-number--disabled):not(.bt-step-number--ellipsis) {
+  background: var(--bg-subtle);
+}
+
+/* Active — subtle bg + brand border */
+.bt-step-number--active {
+  background: var(--bg-subtle);
+  border-color: var(--color-brand-primary);
+}
+
+/* Disabled — no border, muted text */
+.bt-step-number--disabled {
+  border: none;
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+/* Ellipsis — no border, secondary text, non-interactive */
+.bt-step-number--ellipsis {
+  border: none;
+  color: var(--text-secondary);
+  cursor: default;
+  pointer-events: none;
+}
+
+/* SVG icon inside ellipsis pill */
+.bt-step-number__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+.bt-step-number__icon > svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}

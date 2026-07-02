@@ -1,0 +1,41 @@
+/* BTDropdown — molecule wrapper
+ *
+ * Positions BTDropdownList below the trigger using CSS absolute positioning.
+ * The wrapper is inline-block so it shrink-wraps to the trigger width.
+ *
+ * All var() names verified against packages/tokens/platforms/web/bspace/dist/styles.css.
+ * No hex fallback per CLAUDE.md §6.
+ */
+
+.bt-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Floating list — absolute, drops below trigger with 4px gap */
+.bt-dropdown__list {
+  position: absolute;
+  top: calc(100% + 4px);
+  bottom: auto;
+  z-index: 100;
+}
+
+/* Horizontal alignment relative to the trigger (logical — auto-flips in RTL) */
+.bt-dropdown__list--align-start {
+  inset-inline-start: 0;
+}
+
+.bt-dropdown__list--align-center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bt-dropdown__list--align-end {
+  inset-inline-end: 0;
+}
+
+/* Auto-flip: panel opens above when there is not enough space below */
+.bt-dropdown__list--above {
+  top: auto;
+  bottom: calc(100% + 4px);
+}

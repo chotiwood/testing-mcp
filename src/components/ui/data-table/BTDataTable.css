@@ -1,0 +1,513 @@
+.bt-data-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+  color: var(--text-primary);
+  font-family: "Geist", system-ui, sans-serif;
+  font-size: var(--typography-font-size-sm);
+  line-height: var(--typography-line-height-xs);
+}
+
+.bt-data-table__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.bt-data-table__title {
+  color: var(--text-primary);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+}
+
+.bt-data-table__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.bt-data-table__search {
+  width: 180px;
+  /* Contain the BTInput clear-button slide animation (translateX 6px)
+     so it cannot overflow into adjacent toolbar buttons */
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+}
+
+.bt-data-table__toolbar-icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  color: currentColor;
+}
+
+.bt-data-table__filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 24px;
+  min-width: 0; /* allow inner flex child to shrink + scroll */
+}
+
+/* Horizontally scrollable strip of filter tags.
+   flex: 0 1 auto → hug content when it fits, shrink + scroll when it overflows.
+   This keeps "Remove All" right next to the last tag with the same gap. */
+.bt-data-table__filters-scroll {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+  flex: 0 1 auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+.bt-data-table__filters-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.bt-data-table__filters-scroll::-webkit-scrollbar-thumb {
+  background: var(--bg-secondary);
+  border-radius: 2px;
+}
+
+.bt-data-table__filters-scroll > * {
+  flex-shrink: 0;
+}
+
+/* .bt-data-table__filters-action replaced by BTButtonLink */
+
+.bt-table-title__sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.bt-table-title__sortable:hover {
+  background: var(--bg-secondary);
+}
+
+.bt-data-table__viewport {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  --fixed-left-shadow-color: transparent;
+  --fixed-right-shadow-color: transparent;
+  /* Direction-aware shadow cast directions (used by sticky fixed cells).
+     LTR: shadow casts toward inline-end = +X; inline-start = -X.
+     RTL: physical axes flip -> +X becomes inline-start, -X becomes inline-end. */
+  --bt-dt-shadow-cast-inline-end: 4px 0;
+  --bt-dt-shadow-cast-inline-start: -4px 0;
+}
+
+[dir="rtl"] .bt-data-table__viewport {
+  --bt-dt-shadow-cast-inline-end: -4px 0;
+  --bt-dt-shadow-cast-inline-start: 4px 0;
+}
+
+.bt-data-table__viewport--scrolled-left {
+  --fixed-left-shadow-color: rgba(0, 0, 0, 0.12);
+}
+
+.bt-data-table__viewport--scrolled-right {
+  --fixed-right-shadow-color: rgba(0, 0, 0, 0.12);
+}
+
+.bt-data-table__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: auto;
+}
+
+.bt-table-title {
+  background: var(--bg-secondary);
+}
+
+.bt-data-table--fixed-header .bt-table-title {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
+.bt-table-title--secondary {
+  background: var(--color-brand-primary-subtle);
+}
+
+.bt-table-title--no-fill {
+  background: var(--bg-primary);
+}
+
+/* Push background onto <tr> so sticky <th> can inherit it (thead bg doesn't propagate to <tr>).
+   --row-bg is also set so sticky cells can use var(--row-bg) instead of fragile `inherit`. */
+.bt-table-title tr {
+  background: var(--bg-secondary);
+  --row-bg: var(--bg-secondary);
+}
+
+.bt-table-title--secondary tr {
+  background: var(--color-brand-primary-subtle);
+  --row-bg: var(--color-brand-primary-subtle);
+}
+
+.bt-table-title--no-fill tr {
+  background: var(--bg-primary);
+  --row-bg: var(--bg-primary);
+}
+
+.bt-table-row {
+  background: var(--bg-primary);
+  --row-bg: var(--bg-primary);
+}
+
+.bt-table-row--no-fill {
+  background: transparent;
+  --row-bg: transparent;
+}
+
+.bt-table-row:hover {
+  background: var(--bg-secondary);
+  --row-bg: var(--bg-secondary);
+}
+
+/* ── Tree expand animation — fires on mount via v-if / conditional rendering ── */
+@keyframes bt-tree-expand-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* All depth rows animate in when first rendered (tree expand or page load).
+   Since children are rendered as flat <tr> siblings (no nested table),
+   they all share the outer colgroup — column widths stay perfectly aligned. */
+.bt-table-row--depth-1,
+.bt-table-row--depth-2,
+.bt-table-row--depth-3,
+.bt-table-row--depth-4,
+.bt-table-row--depth-5 {
+  animation: bt-tree-expand-in 180ms ease forwards;
+}
+
+.bt-table-row--selected {
+  background: var(--color-brand-primary-subtle);
+  --row-bg: var(--color-brand-primary-subtle);
+}
+
+.bt-table-row--selected:hover {
+  background: var(--color-brand-primary-subtle);
+  --row-bg: var(--color-brand-primary-subtle);
+}
+
+.bt-table-item {
+  height: 32px;
+  padding: 8px;
+  border-inline-start: 1px solid var(--border-primary);
+  border-bottom: 1px solid var(--border-primary);
+  color: var(--text-primary);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  text-align: start;
+  vertical-align: middle;
+}
+
+/* Column alignment — CSS variable set inline on <td>/<th> */
+.bt-table-item {
+  --col-halign: flex-start;
+  text-align: start;
+}
+
+.bt-table-item:first-child {
+  border-inline-start: 0;
+}
+
+/* Remove bottom border on last visible row to avoid double line with viewport border.
+   All rows (parent + depth children) are flat <tr> siblings, so :last-child covers all cases. */
+tbody tr.bt-table-row:last-child .bt-table-item {
+  border-bottom: 0;
+}
+
+.bt-table-item--header {
+  color: var(--text-primary);
+  font-size: var(--typography-font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.bt-table-title--no-fill .bt-table-item--header {
+  color: var(--text-secondary);
+}
+
+.bt-table-item--no-fill {
+  background: transparent;
+}
+
+.bt-table-item--tree {
+  height: auto;
+  padding: 0;
+  vertical-align: top;
+}
+
+.bt-table-item__content {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: var(--space-xs);
+  justify-content: var(--col-halign, flex-start);
+}
+
+.bt-table-item__text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bt-table-item__header-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bt-table-item__sort {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  color: var(--icon-tertiary);
+  flex: 0 0 auto;
+}
+
+.bt-table-item__actions {
+  display: inline-flex;
+  gap: var(--space-2xs);
+  align-items: center;
+  justify-content: var(--col-halign, flex-start);
+  width: 100%;
+}
+
+.bt-table-item__control {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: var(--col-halign, center);
+}
+
+.bt-table-item__option-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-width: 0;
+  justify-content: var(--col-halign, flex-start);
+}
+
+.bt-table-item__option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.bt-table-item__field {
+  width: 100%;
+  min-width: 112px;
+}
+
+.bt-table-item__tree {
+  display: block;
+  min-width: 0;
+}
+
+.bt-table-item__tree .bt-tree {
+  min-width: 180px;
+}
+
+.bt-table-item__tree .bt-tree-item {
+  min-height: 24px;
+  padding-block: 2px;
+}
+
+.bt-table-item__tree .bt-tree-node__children {
+  display: none;
+}
+
+.bt-table-item__field .bt-input,
+.bt-table-item__field .bt-input-dropdown,
+.bt-table-item__field .bt-input-multiple-field {
+  min-height: 32px;
+}
+
+.bt-table-item__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-rd);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-ext-success-subtler);
+  color: var(--color-ext-success-bold);
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  white-space: nowrap;
+}
+
+.bt-data-table__fixed-cell {
+  position: sticky;
+  z-index: 2;
+  background: var(--row-bg, var(--bg-primary));
+  /* Checkbox column — remove horizontal padding, lock width, always center */
+  padding-left: 0;
+  padding-right: 0;
+  width: 32px;
+  min-width: 32px;
+  max-width: 32px;
+  --col-halign: center;
+}
+
+.bt-data-table__fixed-cell--left {
+  inset-inline-start: 0;
+  border-inline-end: 2px solid var(--border-primary);
+}
+
+.bt-data-table__fixed-cell--right {
+  inset-inline-end: 0;
+  border-inline-start: 2px solid var(--border-primary);
+}
+
+.bt-table-title .bt-data-table__fixed-cell {
+  z-index: 3;
+}
+
+/* Hide native horizontal scrollbar on viewport — replaced by external BTScrollbar */
+.bt-data-table__viewport {
+  scrollbar-width: none; /* Firefox */
+}
+.bt-data-table__viewport::-webkit-scrollbar {
+  display: none; /* Chrome / Safari / Edge */
+}
+
+/* External scrollbar spacer */
+.bt-data-table__scrollbar-outer {
+  margin-top: 8px;
+}
+
+.bt-data-table__pagination {
+  display: flex;
+  justify-content: stretch;
+  width: 100%;
+}
+
+/* ── Tree row depth colors (Figma: TableRow states Level 1–5) ─────────── */
+.bt-table-row--depth-1 {
+  background: var(--color-l-grey-50);
+  --row-bg: var(--color-l-grey-50);
+}
+.bt-table-row--depth-2 {
+  background: var(--color-l-grey-100);
+  --row-bg: var(--color-l-grey-100);
+}
+.bt-table-row--depth-3 {
+  background: var(--color-l-grey-150);
+  --row-bg: var(--color-l-grey-150);
+}
+.bt-table-row--depth-4 {
+  background: var(--color-l-grey-200);
+  --row-bg: var(--color-l-grey-200);
+}
+.bt-table-row--depth-5 {
+  background: var(--color-l-grey-300);
+  --row-bg: var(--color-l-grey-300);
+}
+
+/* Selected overrides depth background */
+.bt-table-row--depth-1.bt-table-row--selected,
+.bt-table-row--depth-2.bt-table-row--selected,
+.bt-table-row--depth-3.bt-table-row--selected,
+.bt-table-row--depth-4.bt-table-row--selected,
+.bt-table-row--depth-5.bt-table-row--selected {
+  background: var(--color-brand-primary-subtle);
+  --row-bg: var(--color-brand-primary-subtle);
+}
+
+.bt-table-row--depth-1:hover,
+.bt-table-row--depth-2:hover,
+.bt-table-row--depth-3:hover,
+.bt-table-row--depth-4:hover,
+.bt-table-row--depth-5:hover {
+  background: var(--bg-secondary);
+  --row-bg: var(--bg-secondary);
+}
+
+/* ── Expander column cell layout ──────────────────────────────────────── */
+.bt-table-item__expander-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* expander <td> uses internal indent — override inline padding */
+.bt-table-item:has(.bt-table-item__expander-cell) {
+  padding-inline: 0;
+}
+
+.bt-table-item__expander-indent {
+  flex-shrink: 0;
+}
+
+.bt-table-item__expander-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: var(--radius-xs);
+  color: var(--icon-secondary);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    color 0.1s;
+}
+
+.bt-table-item__expander-btn:hover {
+  color: var(--icon-primary);
+}
+
+.bt-table-item__expander-btn--expanded {
+  transform: rotate(90deg);
+}
+
+
+@media (max-width: 720px) {
+  .bt-data-table__top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .bt-data-table__toolbar {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .bt-data-table__search {
+    width: min(100%, 240px);
+  }
+}

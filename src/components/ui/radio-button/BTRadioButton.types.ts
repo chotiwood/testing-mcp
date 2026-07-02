@@ -1,22 +1,26 @@
 export type BTRadioButtonValue = string | number | boolean;
 
 export interface BTRadioButtonProps {
-  /** The group's currently selected value. Active when modelValue === value. */
+  /**
+   * The group's currently selected value (bind with v-model).
+   * When modelValue === value, this radio is in Active state.
+   */
   modelValue: BTRadioButtonValue;
-  /** This radio button's unique value within the group. */
+  /**
+   * This radio button's unique value within the group.
+   */
   value: BTRadioButtonValue;
-  /** Called with this button's value when clicked. */
-  onChange: (value: BTRadioButtonValue) => void;
   /** Optional label text beside the radio circle. */
   label?: string;
   /** Optional helper text below the label. */
   subtext?: string;
   /** Disables interaction. */
   disabled?: boolean;
-  /** Error border on circle; subtext turns error colour. */
+  /**
+   * Shows error border on the radio circle.
+   * Subtext turns error colour when error is true.
+   */
   error?: boolean;
-  /** Native name attribute for form grouping. */
+  /** Native name attribute for grouping radios in a form. */
   name?: string;
-  /** Additional CSS class names. */
-  className?: string;
 }

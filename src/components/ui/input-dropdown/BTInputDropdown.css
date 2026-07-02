@@ -1,0 +1,253 @@
+/* Clear-button slide-in / slide-out animation — shared canonical definition */
+@import '../input/BTInputClear.css';
+
+/*
+ * BTInputDropdown — click-to-open dropdown field with floating panel.
+ * Figma node 555-3041.
+ *
+ * Layout follows BTInput exactly — position:relative on the field div,
+ * label is position:absolute inside it. No inner content wrapper.
+ *
+ * Visual structure (flex-row, height 48px — same as BTInputDate):
+ * ┌── field (position:relative) ──────────────────────────────────┐
+ * │  label (absolute, resting↔floating)  │  value  │  [×?]  │  [↓]  │
+ * └────────────────────────────────────────────────────────────────┘
+ */
+
+/* ── Outer wrapper ───────────────────────────────────────────── */
+.bt-input-dropdown__wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  font-family: var(--typography-font-family-sans);
+  width: 100%;
+}
+
+/* ── Field row ───────────────────────────────────────────────── */
+/*
+ * position: relative — required so the absolute label is positioned
+ * relative to this field div, not a parent. Mirrors BTInput exactly.
+ */
+.bt-input-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 48px;                  /* Figma Default size: 48px */
+  box-sizing: border-box;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  padding: 0 8px;
+  gap: var(--space-sm);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* When label is floating: add breathing room (mirrors BTInput--label-floating) */
+.bt-input-dropdown--label-floating {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* States */
+.bt-input-dropdown--open     { border-color: var(--color-brand-primary); }
+.bt-input-dropdown--error    { border-color: var(--text-error); }
+.bt-input-dropdown--disabled {
+  background: var(--bg-subtle);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Floating label ──────────────────────────────────────────── */
+/*
+ * position: absolute inside the position:relative field div.
+ * left: 8px — no icon prefix, aligns to field padding.
+ * Resting: centered vertically. Floating: small at top.
+ */
+.bt-input-dropdown__label {
+  position: absolute;
+  pointer-events: none;
+  inset-inline-start: var(--space-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 48px); /* 8px start + 16px chevron + 8px clear + gap */
+  transition: top        150ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform  150ms cubic-bezier(0.4, 0, 0.2, 1),
+              font-size  150ms cubic-bezier(0.4, 0, 0.2, 1),
+              color      150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bt-input-dropdown--label-floating .bt-input-dropdown__label {
+  top: var(--space-sm);
+  transform: none;
+  font-size: var(--typography-font-size-xs);
+}
+
+/* Label color per state */
+.bt-input-dropdown--open     .bt-input-dropdown__label { color: var(--color-brand-primary); }
+.bt-input-dropdown--error    .bt-input-dropdown__label { color: var(--text-error); }
+.bt-input-dropdown--disabled .bt-input-dropdown__label { color: var(--text-disabled); }
+
+.bt-input-dropdown__label-required {
+  color: var(--text-error);
+  margin-inline-start: var(--space-2xs);
+}
+
+/* ── Value / placeholder text ────────────────────────────────── */
+/*
+ * flex: 1; height: 100% — fills available flex space, same as BTInput__field.
+ * When floating: padding-top: 16px pushes text below the floating label.
+ *   Container top padding (8px) + value padding-top (16px) = 24px from field top.
+ *   Floating label: top 8px + line-height 16px = ends at 24px. Perfect alignment.
+ */
+.bt-input-dropdown__value {
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: padding-top 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* When floating: push text down below the floating label.
+   padding-top 14px (not 16) gives 2px breathing room for font descenders at 48px height. */
+.bt-input-dropdown--label-floating .bt-input-dropdown__value {
+  padding-top: 14px;
+  align-items: flex-start;
+}
+
+/* Placeholder state (open but no value) */
+.bt-input-dropdown__value--placeholder {
+  color: var(--text-secondary);
+}
+
+.bt-input-dropdown--disabled .bt-input-dropdown__value { color: var(--text-disabled); }
+
+/* ── Clear (×) button ────────────────────────────────────────── */
+.bt-input-dropdown__clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  color: var(--icon-primary);
+}
+
+.bt-input-dropdown__clear img,
+.bt-input-dropdown__clear svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* ── Chevron ──────────────────────────────────────────────────── */
+.bt-input-dropdown__chevron {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--icon-primary);
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              color     150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bt-input-dropdown__chevron img,
+.bt-input-dropdown__chevron svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.bt-input-dropdown--open .bt-input-dropdown__chevron {
+  transform: rotate(180deg);
+  color: var(--color-brand-primary);
+}
+.bt-input-dropdown--error    .bt-input-dropdown__chevron { color: var(--text-error); }
+.bt-input-dropdown--disabled .bt-input-dropdown__chevron { color: var(--text-disabled); }
+
+/* ── Helper / error text ─────────────────────────────────────── */
+.bt-input-dropdown__helper {
+  display: flex;
+  gap: var(--space-sm);
+  padding: 0 8px;
+  font-size: var(--typography-font-size-xs);
+  font-weight: 500;
+  line-height: var(--typography-line-height-xs);
+}
+
+.bt-input-dropdown__helper-text        { flex: 1; color: var(--text-secondary); }
+.bt-input-dropdown__helper-text--error { color: var(--text-error); }
+
+/* ── Small variant (size="small") ───────────────────────────────
+ * ~40 px auto height.
+ * Empty: py-12px  |  Floating: py-4px
+ * Value text: 12 px (instead of 14 px for default).
+ * Figma: size=Small in node 555-3041.
+ */
+.bt-input-dropdown--small {
+  height: auto;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              padding     150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bt-input-dropdown--small.bt-input-dropdown--label-floating {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+/* In small floating state, label hugs the top edge at 4 px */
+.bt-input-dropdown--small.bt-input-dropdown--label-floating .bt-input-dropdown__label {
+  top: var(--space-xs);
+}
+
+/* Value: auto height (no 100% — container has no fixed height in small) */
+.bt-input-dropdown--small .bt-input-dropdown__value {
+  height: auto;
+  font-size: var(--typography-font-size-xs);
+}
+
+/* Push value text below floating label */
+.bt-input-dropdown--small.bt-input-dropdown--label-floating .bt-input-dropdown__value {
+  padding-top: 16px;
+  align-items: flex-start;
+}
+
+/* ── Dropdown panel (teleported to body) ─────────────────────── */
+.bt-input-dropdown__panel {
+  position: fixed;
+  z-index: 1000;
+  /* width set via JS to match trigger width exactly */
+  box-sizing: border-box;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bt-input-dropdown__panel--visible {
+  opacity: 1;
+  pointer-events: auto;
+}

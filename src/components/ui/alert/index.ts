@@ -1,6 +1,5 @@
-export { BTAlert } from '@/components/ui/alert/BTAlert';
-export { BTAlertProvider, BTAlertContext } from '@/components/ui/alert/BTAlertProvider';
+export { default as BTAlert } from '@/components/ui/alert/BTAlert.vue';
+export { default as BTAlertContainer } from '@/components/ui/alert/BTAlertContainer.vue';
 export { useAlert } from '@/components/ui/alert/useAlert';
-export type { BTAlertReactProps } from '@/components/ui/alert/BTAlert';
 export type { BTAlertProps, BTAlertVariant } from '@/components/ui/alert/BTAlert.types';
-export type { ShowAlertOptions } from '@/components/ui/alert/BTAlertProvider';
+export type { ShowAlertOptions, ActiveAlert } from '@/components/ui/alert/useAlert';

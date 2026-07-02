@@ -1,0 +1,260 @@
+/* BTSwitchField styles — Figma 504:8352 + 504:8234.
+   All colours via @btech/tokens CSS vars — no hex fallbacks. */
+
+/* ── Root wrapper ───────────────────────────────────────────── */
+
+.bt-switch-field {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.bt-switch-field--disabled {
+  cursor: not-allowed;
+}
+
+/* ── Hidden native checkbox (a11y) ──────────────────────────── */
+
+.bt-switch-field__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Track (base = md — no inner text) ──────────────────────── */
+
+.bt-switch-field__track {
+  position: relative;
+  flex-shrink: 0;
+  width: 40px;
+  height: 20px;
+  border-radius: var(--radius-rd);
+  background: var(--bg-tertiary);
+  padding: 4px;
+  box-sizing: border-box;
+  transition: background 0.15s ease;
+  margin-top: 2px; /* optically align track centre with first label line */
+}
+
+/* On */
+.bt-switch-field__input:checked ~ .bt-switch-field__track {
+  background: var(--color-brand-primary);
+}
+
+/* Disabled — both on and off */
+.bt-switch-field__input:disabled ~ .bt-switch-field__track {
+  background: var(--bg-subtlest);
+}
+
+/* Error — off */
+.bt-switch-field--error:not(.bt-switch-field--disabled) .bt-switch-field__input:not(:checked) ~ .bt-switch-field__track {
+  background: var(--color-ext-error);
+}
+
+/* Error — on */
+.bt-switch-field--error:not(.bt-switch-field--disabled) .bt-switch-field__input:checked ~ .bt-switch-field__track {
+  background: var(--color-ext-error);
+}
+
+/* ── Thumb (base = md) ───────────────────────────────────────── */
+
+.bt-switch-field__thumb {
+  position: absolute;
+  top: 4px;
+  inset-inline-start: 4px;
+  width: 18px;
+  height: 12px;
+  border-radius: var(--radius-rd);
+  background: var(--bg-primary);
+  transition: transform 0.15s ease;
+  pointer-events: none;
+}
+
+/* Thumb slides right when on: 40px - 4px*2 - 18px = 14px travel */
+.bt-switch-field__input:checked ~ .bt-switch-field__track .bt-switch-field__thumb {
+  transform: translateX(14px);
+}
+
+[dir="rtl"] .bt-switch-field__input:checked ~ .bt-switch-field__track .bt-switch-field__thumb {
+  transform: translateX(-14px);
+}
+
+/* ── sm overrides (track + thumb) ───────────────────────────── */
+
+.bt-switch-field--sm .bt-switch-field__track {
+  width: 24px;
+  height: 12px;
+  padding: 2px;
+}
+
+.bt-switch-field--sm .bt-switch-field__thumb {
+  top: 2px;
+  inset-inline-start: 2px;
+  width: 10px;
+  height: 8px;
+}
+
+/* Thumb travel for sm: 24 - 2*2 - 10 = 10px */
+.bt-switch-field--sm .bt-switch-field__input:checked ~ .bt-switch-field__track .bt-switch-field__thumb {
+  transform: translateX(10px);
+}
+
+[dir="rtl"] .bt-switch-field--sm .bt-switch-field__input:checked ~ .bt-switch-field__track .bt-switch-field__thumb {
+  transform: translateX(-10px);
+}
+
+/* Label text — md gets vertical padding; sm has none */
+.bt-switch-field__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  padding-top: var(--space-xs);
+  padding-bottom: var(--space-xs);
+}
+
+.bt-switch-field--sm .bt-switch-field__text {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* ── Inner text variant — md ─────────────────────────────────── */
+
+/* Track becomes inline-flex container; width is content-sized */
+.bt-switch-field--inner-text .bt-switch-field__track {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  height: 20px;
+  box-sizing: border-box;
+  padding: 2px 8px 2px 4px; /* off: [thumb][gap][text] */
+  gap: var(--space-xs);
+  flex-direction: row;
+  overflow: hidden;
+  transition: background 0.15s ease, padding 0.15s ease;
+}
+
+/* On state: text before thumb (flex-direction: row-reverse swaps visual order) */
+.bt-switch-field--inner-text .bt-switch-field__input:checked ~ .bt-switch-field__track {
+  flex-direction: row-reverse;
+  padding: 2px 4px 2px 8px; /* on: [text][gap][thumb] */
+}
+
+/* RTL inner-text: mirror padding */
+[dir="rtl"] .bt-switch-field--inner-text .bt-switch-field__track {
+  padding: 2px 4px 2px 8px; /* off RTL */
+}
+
+[dir="rtl"] .bt-switch-field--inner-text .bt-switch-field__input:checked ~ .bt-switch-field__track {
+  padding: 2px 8px 2px 4px; /* on RTL */
+}
+
+/* Override absolute positioning for inner-text thumb.
+   4-class specificity beats the 3-class base rule — no !important needed. */
+.bt-switch-field--inner-text .bt-switch-field__track .bt-switch-field__thumb {
+  position: static;
+  position: static;
+  top: auto;
+  left: auto;
+  width: 18px;
+  height: 12px;
+  flex-shrink: 0;
+  /* JS FLIP drives the slide — CSS must not fight it */
+  transition: none;
+}
+
+/* Prevent the checked-state translateX from firing on inner-text thumbs.
+   4-class specificity beats the 3-class :checked rule without !important. */
+.bt-switch-field--inner-text .bt-switch-field__input:checked ~ .bt-switch-field__track .bt-switch-field__thumb {
+  transform: none;
+}
+
+/* Inner text label — md */
+.bt-switch-field__inner-text {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-2xs); /* md = 10px */
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text-inverse);
+  white-space: nowrap;
+  pointer-events: none;
+  /* JS FLIP drives horizontal slide — no CSS opacity fade */
+}
+
+/* ── Inner text — sm overrides ───────────────────────────────── */
+
+.bt-switch-field--sm.bt-switch-field--inner-text .bt-switch-field__track {
+  height: 12px;
+  padding: 0px 4px 0px 2px; /* off */
+}
+
+.bt-switch-field--sm.bt-switch-field--inner-text .bt-switch-field__input:checked ~ .bt-switch-field__track {
+  padding: 0px 2px 0px 4px; /* on */
+}
+
+[dir="rtl"] .bt-switch-field--sm.bt-switch-field--inner-text .bt-switch-field__track {
+  padding: 0px 2px 0px 4px; /* off RTL */
+}
+
+[dir="rtl"] .bt-switch-field--sm.bt-switch-field--inner-text .bt-switch-field__input:checked ~ .bt-switch-field__track {
+  padding: 0px 4px 0px 2px; /* on RTL */
+}
+
+.bt-switch-field--sm.bt-switch-field--inner-text .bt-switch-field__track .bt-switch-field__thumb {
+  width: 12px;
+  height: 8px;
+  transition: none;
+}
+
+/* Prevent checked-state translateX for sm inner-text thumb */
+.bt-switch-field--sm.bt-switch-field--inner-text .bt-switch-field__input:checked ~ .bt-switch-field__track .bt-switch-field__thumb {
+  transform: none;
+}
+
+.bt-switch-field--sm .bt-switch-field__inner-text {
+  font-size: var(--typography-font-size-3xs); /* sm = 8px */
+}
+
+/* ── Focus ring ──────────────────────────────────────────────── */
+
+.bt-switch-field__input:focus-visible ~ .bt-switch-field__track {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+/* ── Label text ─────────────────────────────────────────────── */
+
+.bt-switch-field__label {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-sm);
+  font-weight: 500;
+  line-height: 1.14; /* 16/14 */
+  color: var(--text-primary);
+}
+
+.bt-switch-field--disabled .bt-switch-field__label {
+  color: var(--text-disabled);
+}
+
+.bt-switch-field__subtext {
+  font-family: var(--typography-font-family-sans);
+  font-size: var(--typography-font-size-xs);
+  font-weight: 400;
+  line-height: 1.33; /* 16/12 */
+  color: var(--text-secondary);
+}
+
+.bt-switch-field--disabled .bt-switch-field__subtext {
+  color: var(--text-disabled);
+}
+
+.bt-switch-field--error:not(.bt-switch-field--disabled) .bt-switch-field__subtext {
+  color: var(--text-error);
+}

@@ -1,3 +1,3 @@
 export * from '@/components/ui/tag/BTTag.types';
-export { BTTag } from '@/components/ui/tag/BTTag';
-export { BTTagGroup } from '@/components/ui/tag/BTTagGroup';
+export { default as BTTag } from '@/components/ui/tag/BTTag.vue';
+export { default as BTTagGroup } from '@/components/ui/tag/BTTagGroup.vue';

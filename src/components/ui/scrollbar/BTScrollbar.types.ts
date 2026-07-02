@@ -11,8 +11,6 @@ export interface BTScrollbarProps {
    * @default 'y'
    */
   direction?: BTScrollbarDirection;
-  /** Additional CSS class names. */
-  className?: string;
-  /** Child content rendered inside the scrollable container. */
-  children?: React.ReactNode;
+  /** Additional CSS class names (Vue: `class`, React: `className`). */
+  class?: string;
 }

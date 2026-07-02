@@ -1,2 +1,2 @@
-export { BTInputSearch } from '@/components/ui/input/Search/BTInputSearch';
-export type { BTInputSearchProps, BTInputSearchHandle } from '@/components/ui/input/Search/BTInputSearch.types';
+export { default as BTInputSearch } from '@/components/ui/input/Search/BTInputSearch.vue';
+export type { BTInputSearchProps } from '@/components/ui/input/Search/BTInputSearch.types';

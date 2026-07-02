@@ -1,33 +1,12 @@
-import { useSyncExternalStore } from 'react';
-import type {
-  BTToastItem,
-  BTToastOptions,
-  BTToastType,
-} from '@/components/ui/toast/BTToast.types';
+import { reactive } from 'vue';
+import type { BTToastItem, BTToastOptions, BTToastType } from '@/components/ui/toast/BTToast.types';
 
 let _id = 0;
-let _toasts: BTToastItem[] = [];
-const _listeners = new Set<() => void>();
-
-function notify(): void {
-  _listeners.forEach((cb) => cb());
-}
-
-function subscribe(cb: () => void): () => void {
-  _listeners.add(cb);
-  return () => {
-    _listeners.delete(cb);
-  };
-}
-
-function getSnapshot(): BTToastItem[] {
-  return _toasts;
-}
+const _toasts = reactive<BTToastItem[]>([]);
 
 function add(item: Omit<BTToastItem, 'id'>): string {
   const id = String(++_id);
-  _toasts = [..._toasts, { ...item, id }];
-  notify();
+  _toasts.push({ ...item, id });
   if (item.duration > 0) {
     setTimeout(() => remove(id), item.duration);
   }
@@ -35,11 +14,8 @@ function add(item: Omit<BTToastItem, 'id'>): string {
 }
 
 function remove(id: string): void {
-  const next = _toasts.filter((t) => t.id !== id);
-  if (next.length !== _toasts.length) {
-    _toasts = next;
-    notify();
-  }
+  const i = _toasts.findIndex((t) => t.id === id);
+  if (i >= 0) _toasts.splice(i, 1);
 }
 
 function make(type: BTToastType) {
@@ -71,11 +47,7 @@ export const toast = Object.assign(make('default'), {
   dismiss: remove,
 });
 
-/** Reactive accessor used by `<BTToaster>`. */
-export function useToast(): {
-  toasts: BTToastItem[];
-  remove: (id: string) => void;
-} {
-  const toasts = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  return { toasts, remove };
+/** Reactive accessor for the `<BTToaster>` component. */
+export function useToast() {
+  return { toasts: _toasts, remove };
 }

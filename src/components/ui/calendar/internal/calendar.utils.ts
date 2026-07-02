@@ -259,12 +259,15 @@ function buildDay(
       const inRangeBetween = isInRange(date, lo, hi);
 
       if (hasHoverPreview) {
+        // Hover preview — separate from confirmed
         isHoverPreviewPoint = isSameDay(date, rangeHover!);
         isInRangeHover = inRangeBetween;
       } else {
+        // Confirmed range (both endpoints selected)
         inRange = inRangeBetween;
       }
     } else {
+      // Only start selected, no active range
       rangeStartDay = isSameDay(date, rangeStart);
       rangeStartOnly = rangeStartDay;
     }

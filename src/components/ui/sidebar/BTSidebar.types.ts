@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import type { BTAvatarItem } from '@/components/ui/avatar/BTAvatar.types';
 
 export type { BTAvatarItem };
@@ -13,16 +12,12 @@ export interface BTSidebarNavItem {
   /** Display label — unused for Divider. */
   label?: string;
   /**
-   * Icon for Main items — any ReactNode (img, svg, icon component, etc.).
-   * Rendered as-is inside the icon slot area of the sidebar item row.
-   * Ignored for Submenu / Sub Submenu (dot used instead).
-   *
-   * @example
-   * ```tsx
-   * icon: <img src="/icons/home.svg" className="bt-sidebar-item__icon-img" alt="" />
-   * ```
+   * Icon for Main items — any image/SVG URL (data URI or path).
+   * Rendered via CSS mask-image so state colors (active/disabled) work automatically.
+   * Pass a data-URI SVG for full color theming support.
+   * For fully custom icon rendering, omit this and use the BTSidebarItem #icon slot directly.
    */
-  icon?: ReactNode;
+  icon?: string;
   /** Whether this item is the currently selected / active page. */
   active?: boolean;
   /** Non-interactive item (visually dimmed, no click). */
@@ -32,20 +27,18 @@ export interface BTSidebarNavItem {
 }
 
 /**
- * Sidebar header data — title, description, and logo.
- * The `logo` field accepts any ReactNode (img, svg, icon component, etc.):
+ * Sidebar header data — title and description only.
+ * The logo is rendered via the `#logo` named slot on `<BTSidebar>` (any element accepted):
  *
- * ```tsx
- * header={{
- *   logo: <img src="/logo.svg" className="bt-sidebar__logo" alt="App" />,
- *   title: 'App',
- *   description: 'Workspace',
- * }}
+ * ```vue
+ * <BTSidebar :header="{ title: 'App', description: 'Workspace' }">
+ *   <template #logo>
+ *     <img src="/logo.svg" class="bt-sidebar__logo" alt="App" />
+ *   </template>
+ * </BTSidebar>
  * ```
  */
 export interface BTSidebarHeader {
-  /** Logo element — any ReactNode rendered in the header. */
-  logo?: ReactNode;
   /** Application or workspace title (bold 14 px). */
   title?: string;
   /** Subtitle / description line (12 px text-secondary). */
@@ -72,24 +65,12 @@ export interface BTSidebarProps {
   header?: BTSidebarHeader;
   /** Navigation item tree (Main → Submenu → Sub Submenu). */
   items?: BTSidebarNavItem[];
-  /**
-   * Footer content — accepts any ReactNode.
-   * Rendered inside `.bt-sidebar__footer` which handles layout and collapsed state.
-   * Use `bt-sidebar__footer-text`, `bt-sidebar__footer-name`, `bt-sidebar__footer-email`
-   * CSS classes for the standard avatar + name/email layout.
-   */
-  footer?: ReactNode;
-  /** Controlled search input value (omit to hide the search bar). */
+  /** Controlled search input value. */
   searchValue?: string;
   /**
    * Item IDs that should be expanded on first render.
    * Useful for demos and deep-link navigation.
    */
   initialExpandedIds?: string[];
-  /** Called when the toggle button is clicked. */
-  onToggle?: () => void;
-  /** Called on search input change. */
-  onSearch?: (value: string) => void;
-  /** Called when any nav item is clicked. */
-  onItemClick?: (item: BTSidebarNavItem) => void;
+  // footer content is passed via the #footer named slot
 }

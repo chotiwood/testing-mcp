@@ -6,7 +6,7 @@
 
 /** A single option in the checkbox group. */
 export interface BTInputMultiOptionsItem<T = string> {
-  /** Unique value added to / removed from the value array on toggle. */
+  /** Unique value added to / removed from the modelValue array on toggle. */
   value: T;
   /** Visible label beside the checkbox. */
   label?: string;
@@ -15,12 +15,10 @@ export interface BTInputMultiOptionsItem<T = string> {
 }
 
 export interface BTInputMultiOptionsProps<T = string> {
-  /** Field `name` — wires this input to BTForm context when wrapped. */
+  /** Currently selected values — bind with v-model. Defaults to empty array. */
+  modelValue?: T[];
+  /** Field name — when set inside a `<BTForm>`, auto-wires value/error. */
   name?: string;
-  /** Currently selected values. Defaults to empty array. */
-  value?: T[];
-  /** Called when the user toggles an option. */
-  onChange?: (value: T[]) => void;
   /** Group label shown above the checkbox list. */
   label?: string;
   /** Shows a red `*` after the label when true. */
@@ -30,7 +28,7 @@ export interface BTInputMultiOptionsProps<T = string> {
   /** Disables the entire group. */
   disabled?: boolean;
   /**
-   * External error message. When set, all checkboxes show the error border
+   * External error message. When set, all checkbox boxes show the error border
    * and the text is displayed below the group in error colour.
    * Overrides any internal validator error.
    */
@@ -38,15 +36,8 @@ export interface BTInputMultiOptionsProps<T = string> {
   /** Helper text shown below the group in the default state. */
   helperText?: string;
   /**
-   * Validation function called by `validate()` (via ref handle).
+   * Validation function called by `validate()` (exposed via defineExpose).
    * Return an error string or null.
    */
   validator?: (value: T[]) => string | null;
-  /** Additional CSS class names. */
-  className?: string;
-}
-
-export interface BTInputMultiOptionsHandle {
-  /** Runs the validator and shows the error message. Returns true when valid. */
-  validate(): boolean;
 }

@@ -1,5 +1,5 @@
 /**
- * BTInputDropdown — input-family select (React).
+ * BTInputDropdown — Input-family dropdown select types.
  *
  * Figma node 555-3041.
  */
@@ -8,10 +8,10 @@ import type { BTDropdownItem } from '@/components/ui/dropdown-list/BTDropdownLis
 export type BTInputDropdownSize = 'default' | 'small';
 
 export interface BTInputDropdownProps<T = string> {
-  /** Field `name` — wires this input to BTForm context when wrapped. */
-  name?: string;
   /** Currently selected value — must match one of items[n].value */
-  value?: T | null;
+  modelValue?: T | null;
+  /** Field name — when set inside a `<BTForm>`, auto-wires value/error. */
+  name?: string;
   /** Floating label text */
   label?: string;
   /** Items to display in the panel */
@@ -35,7 +35,7 @@ export interface BTInputDropdownProps<T = string> {
   readOnly?: boolean;
   /** @default false */
   required?: boolean;
-  /** External error message */
+  /** External error message — overrides internal validator error */
   errorText?: string;
   helperText?: string;
   /** Used for label `for` / aria — auto-generated if omitted */
@@ -50,7 +50,8 @@ export interface BTInputDropdownProps<T = string> {
    * Defaults to `item.label ?? ''`.
    */
   getLabel?: (item: BTDropdownItem<T>) => string;
-  onChange?: (value: T | null) => void;
-  onClear?: () => void;
-  className?: string;
 }
+
+// Emits:
+//   'update:modelValue'  (value: T | null)
+//   'clear'              ()

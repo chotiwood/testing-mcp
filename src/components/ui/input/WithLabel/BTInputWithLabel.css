@@ -70,7 +70,7 @@
   flex-shrink: 0;
 }
 
-/* Outer corners only — inner edge flush with field border (logical for RTL) */
+/* Outer corners only — inner edge flush with field border */
 .bt-input-with-label__pill--left  {
   border-start-start-radius: var(--radius-sm);
   border-end-start-radius:   var(--radius-sm);

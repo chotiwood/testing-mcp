@@ -1,2 +1,2 @@
-export { BTInputTextArea } from '@/components/ui/input/TextArea/BTInputTextArea';
-export type { BTInputTextAreaProps, BTInputTextAreaHandle } from '@/components/ui/input/TextArea/BTInputTextArea.types';
+export { default as BTInputTextArea } from '@/components/ui/input/TextArea/BTInputTextArea.vue';
+export type { BTInputTextAreaProps } from '@/components/ui/input/TextArea/BTInputTextArea.types';

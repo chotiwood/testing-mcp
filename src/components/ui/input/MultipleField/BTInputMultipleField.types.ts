@@ -7,29 +7,22 @@ export type BTInputMultipleFieldType = 'wrap' | 'scroll';
  * Props for {@link BTInputMultipleField}.
  *
  * @example
- * ```tsx
  * <BTInputMultipleField
- *   value={selectedTags}
- *   onChange={setSelectedTags}
+ *   v-model="selectedTags"
  *   label="Frameworks"
- *   items={frameworkItems}
- *   hasSearch
+ *   :items="frameworkItems"
+ *   has-search
  * />
- * ```
  *
  * @example Free-text only (no predefined items)
- * ```tsx
- * <BTInputMultipleField value={tags} onChange={setTags} label="Skills" />
- * ```
+ * <BTInputMultipleField v-model="tags" label="Skills" />
  */
 export interface BTInputMultipleFieldProps {
-  /** Field `name` — wires this input to BTForm context when wrapped. */
-  name?: string;
   /**
-   * Current list of tags. The component calls onChange with the updated list
-   * on every change.
+   * Current list of tags (v-model). The component emits update:modelValue
+   * with the updated list on every change.
    */
-  value?: BTTagItem[];
+  modelValue?: BTTagItem[];
   /**
    * Predefined selectable options shown in a checkbox dropdown.
    * Each option is toggled into/out of the tag list.
@@ -74,20 +67,4 @@ export interface BTInputMultipleFieldProps {
    * @default 'No result found.'
    */
   emptyLabel?: string;
-  /** Called with the updated tag list on every change. */
-  onChange?: (tags: BTTagItem[]) => void;
-  /**
-   * Called on validate(). Return null for valid, or an error string.
-   * The returned string is shown below the field as an error.
-   */
-  validator?: (tags: BTTagItem[]) => string | null;
-}
-
-/**
- * Imperative handle exposed via forwardRef.
- * Access via `ref.current.validate()`.
- */
-export interface BTInputMultipleFieldHandle {
-  /** Runs the validator; shows the error inline; returns true if valid. */
-  validate: () => boolean;
 }

@@ -128,7 +128,8 @@
 
 .bt-card__header-aside {
   flex-shrink: 0;
-  align-self: flex-start;
+  width: 20px;
+  align-self: stretch;
 }
 
 /* ── Body ───────────────────────────────────────────────────────────────── */

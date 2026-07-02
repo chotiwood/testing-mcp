@@ -2,20 +2,17 @@
  * Props for {@link BTInputWithLabel}.
  *
  * @example Left label (unit prefix like "kg", "IDR")
- * <BTInputWithLabel leftLabel="kg" label="Weight" value={value} onChange={setValue} />
+ * <BTInputWithLabel left-label="kg" label="Weight" v-model="value" />
  *
  * @example Right label
- * <BTInputWithLabel rightLabel="m²" label="Area" value={value} onChange={setValue} />
+ * <BTInputWithLabel right-label="m²" label="Area" v-model="value" />
  *
  * @example Both sides
- * <BTInputWithLabel leftLabel="From" rightLabel="IDR" label="Amount" value={value} onChange={setValue} />
+ * <BTInputWithLabel left-label="From" right-label="IDR" label="Amount" v-model="value" />
  */
 export interface BTInputWithLabelProps {
-  /** Current value. */
-  value?: string;
-
-  /** Called with the new string whenever the input changes. */
-  onChange?: (value: string) => void;
+  /** Current value (v-model). */
+  modelValue?: string;
 
   /**
    * Text shown inside the left label pill.
@@ -64,25 +61,4 @@ export interface BTInputWithLabelProps {
 
   /** Show current / max character counter below the field. @default false */
   showCharCount?: boolean;
-
-  /**
-   * Custom validation function. Called by `validate()` — returns an error
-   * string or null.
-   */
-  validator?: (value: string) => string | null;
-
-  /** Called when the clear (×) button is clicked. */
-  onClear?: () => void;
-
-  /** Called on focus. */
-  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
-
-  /** Called on blur. */
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-}
-
-/** Imperative handle exposed via ref. */
-export interface BTInputWithLabelHandle {
-  /** Runs the validator and shows the error. Returns true if valid. */
-  validate: () => boolean;
 }

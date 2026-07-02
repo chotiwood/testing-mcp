@@ -1,0 +1,57 @@
+<script setup lang="ts">
+/**
+ * BTStepNumber — reusable step/page pill component.
+ * Figma: node 3007-2442.
+ *
+ * @example
+ * ```vue
+ * <!-- Normal page pill -->
+ * <BTStepNumber :page="3" :isActive="currentPage === 3" @click="currentPage = 3" />
+ *
+ * <!-- Ellipsis placeholder -->
+ * <BTStepNumber :page="0" isEllipsis />
+ *
+ * <!-- Disabled -->
+ * <BTStepNumber :page="2" isDisabled />
+ * ```
+ */
+import '@/components/ui/step-number/BTStepNumber.css';
+import type { BTStepNumberProps } from '@/components/ui/step-number/BTStepNumber.types';
+
+const props = withDefaults(defineProps<BTStepNumberProps>(), {
+  isActive: false,
+  isDisabled: false,
+  isEllipsis: false,
+});
+
+const emit = defineEmits<{ click: [] }>();
+
+function handleClick() {
+  if (!props.isDisabled && !props.isEllipsis) emit('click');
+}
+</script>
+
+<template>
+  <button
+    class="bt-step-number"
+    :class="{
+      'bt-step-number--active':   isActive,
+      'bt-step-number--disabled': isDisabled,
+      'bt-step-number--ellipsis': isEllipsis,
+    }"
+    :disabled="isDisabled || isEllipsis"
+    :aria-label="isEllipsis ? undefined : `Page ${page}`"
+    :aria-current="isActive ? 'page' : undefined"
+    @click="handleClick"
+  >
+    <template v-if="isEllipsis">
+      <!-- more_horiz — viewBox centres the 10.67×2.67 dots to match Figma's 41.67%/16.67% inset in a 16px container -->
+      <span class="bt-step-number__icon">
+        <svg viewBox="-2.67 -6.67 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M1.33333 2.66667C0.966667 2.66667 0.652778 2.53611 0.391667 2.275C0.130556 2.01389 0 1.7 0 1.33333C0 0.966667 0.130556 0.652778 0.391667 0.391667C0.652778 0.130556 0.966667 0 1.33333 0C1.7 0 2.01389 0.130556 2.275 0.391667C2.53611 0.652778 2.66667 0.966667 2.66667 1.33333C2.66667 1.7 2.53611 2.01389 2.275 2.275C2.01389 2.53611 1.7 2.66667 1.33333 2.66667ZM5.33333 2.66667C4.96667 2.66667 4.65278 2.53611 4.39167 2.275C4.13056 2.01389 4 1.7 4 1.33333C4 0.966667 4.13056 0.652778 4.39167 0.391667C4.65278 0.130556 4.96667 0 5.33333 0C5.7 0 6.01389 0.130556 6.275 0.391667C6.53611 0.652778 6.66667 0.966667 6.66667 1.33333C6.66667 1.7 6.53611 2.01389 6.275 2.275C6.01389 2.53611 5.7 2.66667 5.33333 2.66667ZM9.33333 2.66667C8.96667 2.66667 8.65278 2.53611 8.39167 2.275C8.13056 2.01389 8 1.7 8 1.33333C8 0.966667 8.13056 0.652778 8.39167 0.391667C8.65278 0.130556 8.96667 0 9.33333 0C9.7 0 10.0139 0.130556 10.275 0.391667C10.5361 0.652778 10.6667 0.966667 10.6667 1.33333C10.6667 1.7 10.5361 2.01389 10.275 2.275C10.0139 2.53611 9.7 2.66667 9.33333 2.66667Z"/>
+        </svg>
+      </span>
+    </template>
+    <template v-else>{{ page }}</template>
+  </button>
+</template>

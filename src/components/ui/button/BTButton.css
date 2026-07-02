@@ -52,15 +52,18 @@
 }
 
 /* When iconOnly has a rightIcon/leftIcon addon (e.g. BTHint badge),
-   drop the fixed square size and let padding + content determine width. */
+   drop the fixed square size and let padding + content determine width.
+   Increased gap (8px) gives the addon proper breathing room from the icon. */
 .bt-button--icon-only.bt-button--has-addon {
   width: unset;
   height: unset;
+  gap: var(--space-sm);
 }
 
 .bt-button--icon-only.bt-button--has-addon.bt-button--small {
   width: unset;
   height: unset;
+  gap: var(--space-xs);
 }
 
 /* Force 16×16 icon for all icon-only sizes */

@@ -8,14 +8,11 @@ export type BTButtonLinkVariant =
   | 'invert'     // text.inverse — for dark / coloured surfaces
   | 'custom';    // brand.secondary — amber
 
-export interface BTButtonLinkProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface BTButtonLinkProps {
   /** Text shown in the link. */
   label: string;
   /** Visual style. @default 'primary' */
   variant?: BTButtonLinkVariant;
-  /** 16px icon rendered before the label. */
-  leftIcon?: React.ReactNode;
-  /** 16px icon rendered after the label. */
-  rightIcon?: React.ReactNode;
+  /** Disables pointer events and dims colour. @default false */
+  disabled?: boolean;
 }
