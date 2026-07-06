@@ -1,6 +1,7 @@
 .dashboard-layout {
   display: flex;
-  min-height: 100svh;
+  height: 100svh;
+  overflow: hidden;
   background: var(--bg-subtle);
 }
 
@@ -44,6 +45,7 @@
 .dashboard-main {
   flex: 1;
   min-width: 0;
+  overflow-y: auto;
   padding: var(--space-xl) var(--space-s2xl);
   display: flex;
   flex-direction: column;
