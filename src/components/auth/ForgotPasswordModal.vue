@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import BTModal from '@/components/ui/modal/BTModal.vue'
 import BTInput from '@/components/ui/input/BTInput.vue'
 import BTAlert from '@/components/ui/alert/BTAlert.vue'
+import BTLoading from '@/components/ui/loading/BTLoading.vue'
 import { useFormValidation } from '@/composables/useAuth'
 
 const props = defineProps<{
@@ -73,20 +74,28 @@ async function handleSubmit() {
       />
 
       <template v-else>
-        <BTInput
-          v-model="email"
-          type="email"
-          label="Alamat Email"
-          placeholder="email@perusahaan.com"
-          :required="true"
-          :error-text="emailError ?? undefined"
-          :disabled="isSubmitting"
-          :validator="validateEmail"
-          clearable
-        />
-        <p class="forgot-modal__hint">
-          Link reset password berlaku selama 30 menit.
-        </p>
+        <div class="forgot-modal__form">
+          <BTInput
+            v-model="email"
+            type="email"
+            label="Alamat Email"
+            placeholder="email@perusahaan.com"
+            :required="true"
+            :error-text="emailError ?? undefined"
+            :disabled="isSubmitting"
+            :validator="validateEmail"
+            clearable
+            @keydown.enter.prevent="handleSubmit"
+          />
+          <p class="forgot-modal__hint">
+            Link reset password berlaku selama 30 menit.
+          </p>
+
+          <div v-if="isSubmitting" class="forgot-modal__loading">
+            <BTLoading type="spinner" :size="32" />
+            <p class="forgot-modal__loading-text">Mengirim permintaan reset...</p>
+          </div>
+        </div>
       </template>
     </div>
   </BTModal>
@@ -100,9 +109,33 @@ async function handleSubmit() {
   padding: var(--space-xl) 0;
 }
 
+.forgot-modal__form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
 .forgot-modal__hint {
   font-size: var(--typography-font-size-xs);
   color: var(--text-secondary);
   line-height: var(--typography-line-height-xs);
+}
+
+.forgot-modal__loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  background: color-mix(in srgb, var(--bg-primary) 92%, transparent);
+  border-radius: var(--radius-sm);
+}
+
+.forgot-modal__loading-text {
+  font-size: var(--typography-font-size-xs);
+  color: var(--text-secondary);
 }
 </style>

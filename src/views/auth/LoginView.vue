@@ -4,10 +4,11 @@ import { Vue3Lottie } from 'vue3-lottie'
 import btechAnim from '@btech/assets/anim/load-btech-anim.json'
 import BTInput from '@/components/ui/input/BTInput.vue'
 import BTButton from '@/components/ui/button/BTButton.vue'
+import BTButtonLink from '@/components/ui/button-link/BTButtonLink.vue'
 import BTLoading from '@/components/ui/loading/BTLoading.vue'
 import BTAlert from '@/components/ui/alert/BTAlert.vue'
 import ForgotPasswordModal from '@/components/auth/ForgotPasswordModal.vue'
-import { useAuth, useFormValidation } from '@/composables/useAuth'
+import { DEMO_EMAIL, DEMO_PASSWORD, useAuth, useFormValidation } from '@/composables/useAuth'
 
 const { isLoggingIn, loginError, login } = useAuth()
 const { validateEmail, validatePassword } = useFormValidation()
@@ -77,7 +78,7 @@ function handleKeydown(event: KeyboardEvent) {
         <BTAlert
           variant="info"
           label="Demo Credentials"
-          description="Email: andi.surya@btech.id  |  Password: btech2024"
+          :description="`Email: ${DEMO_EMAIL}  |  Password: ${DEMO_PASSWORD}  |  Gunakan wrong@btech.id untuk uji error`"
           class="login-page__hint"
         />
 
@@ -109,23 +110,20 @@ function handleKeydown(event: KeyboardEvent) {
           />
 
           <div class="login-page__forgot">
-            <button
-              type="button"
-              class="login-page__forgot-btn"
+            <BTButtonLink
+              label="Lupa password?"
+              variant="primary"
               :disabled="isLoggingIn"
               @click="isForgotOpen = true"
-            >
-              Lupa password?
-            </button>
+            />
           </div>
 
-          <!-- Submit -->
           <BTButton
             type="submit"
             variant="primary"
             :label="isLoggingIn ? 'Memproses...' : 'Masuk'"
             :disabled="isLoggingIn"
-            style="width: 100%"
+            class="login-page__submit"
           />
         </form>
 
@@ -180,7 +178,7 @@ function handleKeydown(event: KeyboardEvent) {
   justify-content: center;
   width: 200px;
   height: 200px;
-  background: rgba(255, 255, 255, 0.15);
+  background: color-mix(in srgb, var(--text-inverse) 15%, transparent);
   border-radius: var(--radius-rd);
   backdrop-filter: blur(8px);
 }
@@ -189,12 +187,11 @@ function handleKeydown(event: KeyboardEvent) {
   font-size: var(--typography-font-size-s4xl);
   font-weight: var(--typography-font-weight-bold);
   color: var(--text-inverse);
-  letter-spacing: -0.5px;
 }
 
 .login-page__brand-subtitle {
   font-size: var(--typography-font-size-md);
-  color: rgba(255, 255, 255, 0.8);
+  color: color-mix(in srgb, var(--text-inverse) 80%, transparent);
   line-height: var(--typography-line-height-lg);
 }
 
@@ -251,24 +248,8 @@ function handleKeydown(event: KeyboardEvent) {
   margin-top: calc(var(--space-xs) * -1);
 }
 
-.login-page__forgot-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: var(--typography-font-size-xs);
-  color: var(--color-brand-primary);
-  font-weight: var(--typography-font-weight-medium);
-  padding: 0;
-  transition: opacity 0.15s;
-}
-
-.login-page__forgot-btn:hover {
-  opacity: 0.8;
-}
-
-.login-page__forgot-btn:disabled {
-  color: var(--text-disabled);
-  cursor: not-allowed;
+.login-page__submit {
+  width: 100%;
 }
 
 /* ── Loading overlay ───────────────────────────────────────────────────────── */
@@ -280,7 +261,7 @@ function handleKeydown(event: KeyboardEvent) {
   align-items: center;
   justify-content: center;
   gap: var(--space-lg);
-  background: rgba(255, 255, 255, 0.9);
+  background: color-mix(in srgb, var(--bg-primary) 90%, transparent);
   border-radius: var(--radius-md);
   backdrop-filter: blur(2px);
 }
